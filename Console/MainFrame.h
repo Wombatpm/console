@@ -83,6 +83,7 @@ class MainFrame
 			UPDATE_ELEMENT(ID_VIEW_FULLSCREEN, UPDUI_MENUPOPUP | UPDUI_TOOLBAR)
 			UPDATE_ELEMENT(ID_SEARCH_MATCH_CASE, UPDUI_TOOLBAR)
 			UPDATE_ELEMENT(ID_SEARCH_MATCH_WHOLE_WORD, UPDUI_TOOLBAR)
+			UPDATE_ELEMENT(ID_SWITCH_TRANSPARENCY, UPDUI_MENUPOPUP)
 
 			UPDATE_ELEMENT(1, UPDUI_STATUSBAR)
 			UPDATE_ELEMENT(2, UPDUI_STATUSBAR)
@@ -173,6 +174,7 @@ class MainFrame
 			COMMAND_ID_HANDLER(ID_FILE_CLOSE_ALL_TABS_RIGHT    , OnFileCloseTab)
 			COMMAND_ID_HANDLER(ID_ATTACH_CONSOLES              , OnAttachConsoles)
 			COMMAND_ID_HANDLER(ID_APP_EXIT, OnFileExit)
+			COMMAND_ID_HANDLER(ID_EDIT_CLEAR, OnEditClear)
 			COMMAND_ID_HANDLER(ID_EDIT_COPY, OnEditCopy)
 			COMMAND_ID_HANDLER(ID_EDIT_SELECT_ALL, OnEditSelectAll)
 			COMMAND_ID_HANDLER(ID_EDIT_CLEAR_SELECTION, OnEditClearSelection)
@@ -199,6 +201,13 @@ class MainFrame
 			COMMAND_ID_HANDLER(ID_SEARCH_MATCH_CASE,       OnSearchSettings)
 			COMMAND_ID_HANDLER(ID_SEARCH_MATCH_WHOLE_WORD, OnSearchSettings)
 			COMMAND_ID_HANDLER(ID_FIND,                    OnFind)
+			COMMAND_ID_HANDLER(ID_SWITCH_TRANSPARENCY,     OnSwitchTransparency)
+			COMMAND_ID_HANDLER(ID_SHOW_CONTEXT_MENU_1,     OnShowContextMenu1)
+			COMMAND_ID_HANDLER(ID_SHOW_CONTEXT_MENU_2,     OnShowContextMenu2)
+			COMMAND_ID_HANDLER(ID_SHOW_CONTEXT_MENU_3,     OnShowContextMenu3)
+			COMMAND_ID_HANDLER(ID_SEND_CTRL_C,             OnSendCtrlEvent)
+			COMMAND_ID_HANDLER(ID_FONT_INFO,               OnFontInfo)
+			COMMAND_ID_HANDLER(ID_DIAGNOSE,                OnDiagnose)
 
 			COMMAND_RANGE_HANDLER(ID_EXTERNAL_COMMAND_1, (ID_EXTERNAL_COMMAND_1 + EXTERNAL_COMMANDS_COUNT - 1), OnExternalCommand)
 
@@ -271,6 +280,7 @@ class MainFrame
 
 		LRESULT OnFileExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
+		LRESULT OnEditClear(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 		LRESULT OnEditCopy(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 		LRESULT OnEditSelectAll(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 		LRESULT OnEditClearSelection(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
@@ -290,10 +300,17 @@ class MainFrame
 		LRESULT OnSearchText(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 		LRESULT OnSearchSettings(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 		LRESULT OnFind(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+		LRESULT OnSwitchTransparency(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+		LRESULT OnShowContextMenu1(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+		LRESULT OnShowContextMenu2(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+		LRESULT OnShowContextMenu3(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+		LRESULT OnSendCtrlEvent(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
 		LRESULT OnHelp(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 		LRESULT OnAppAbout(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 		LRESULT OnDumpBuffer(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+		LRESULT OnFontInfo(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+		LRESULT OnDiagnose(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
 		LRESULT OnExternalCommand(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
@@ -309,6 +326,8 @@ class MainFrame
 		void SendTextToConsoles(const wchar_t* pszText);
 		bool GetAppActiveStatus(void) const { return this->m_bAppActive; }
 
+		std::wstring FormatTitle(std::wstring strFormat, TabView * tabView, std::shared_ptr<ConsoleView> consoleView);
+
 	private:
 
 		void ActivateApp(void);
@@ -317,7 +336,6 @@ class MainFrame
 		void CloseTab(CTabViewTabItem* pTabItem);
 
 		void UpdateTabTitle(std::shared_ptr<TabView> tabView);
-		std::wstring FormatTitle(std::wstring strFormat, std::shared_ptr<TabView> tabView, std::shared_ptr<ConsoleView> consoleView);
 		void UpdateTabsMenu(CMenuHandle mainMenu, CMenu& tabsMenu);
 		void UpdateOpenedTabsMenu(CMenu& tabsMenu);
 		void UpdateMenuHotKeys(void);
@@ -352,6 +370,7 @@ class MainFrame
 		void AddSearchMRU(CString& item);
 
 		static BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC /*hdcMonitor*/, LPRECT /*lprcMonitor*/, LPARAM lpData);
+		static BOOL CALLBACK MonitorEnumProcDiag(HMONITOR hMonitor, HDC /*hdcMonitor*/, LPRECT lprcMonitor, LPARAM lpData);
 		static BOOL CALLBACK ConsoleEnumWindowsProc(HWND hwnd, LPARAM lParam);
 
 	public:
@@ -385,6 +404,7 @@ class MainFrame
 		bool m_bStatusBarVisible;
 		bool m_bTabsVisible;
 		bool m_bFullScreen;
+		bool m_bTransparencyActive;
 
 		DockPosition	m_dockPosition;
 		ZOrder			m_zOrder;
@@ -414,6 +434,7 @@ class MainFrame
 		CToolBarCtrl        m_toolbar;
 		CComboBoxEx         m_cb;
 #ifdef _USE_AERO
+		aero::CReBarCtrl    m_rebar;
 		aero::CToolBarCtrl  m_searchbar;
 		aero::CEdit         m_searchedit;
 #else

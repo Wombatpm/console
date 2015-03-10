@@ -12,7 +12,7 @@
 #define _WIN32_IE     0x0700
 #define _RICHEDIT_VER 0x0200
 #else
-#define _WIN32_IE     0x0400
+#define _WIN32_IE     0x0501
 #define _RICHEDIT_VER 0x0100
 #endif
 
@@ -36,15 +36,16 @@ extern CAppModule _Module;
 #include <atlddx.h>
 #include <atlmisc.h>
 
+#include <atltheme.h>
 #include <atlframe.h>
 #include <atlctrls.h>
 #include <atldlgs.h>
 #include <atlctrlw.h>
 #include <atlctrlx.h>
-#include <atltheme.h>
 #pragma warning(pop)
 
 #include <userenv.h>
+#include <Lm.h>
 
 #pragma warning(push)
 #pragma warning(disable: 4189 4267)
@@ -99,6 +100,7 @@ extern CAppModule _Module;
 #include <vector>
 #include <stack>
 #include <array>
+#include <regex>
 using namespace std;
 #pragma warning(pop)
 
@@ -126,9 +128,9 @@ using namespace boost::multi_index;
 #include "../shared/Win32Exception.h"
 #include "../shared/NamedPipe.h"
 #include "Helpers.h"
-#include "ConsoleHandler.h"
 #include "ImageHandler.h"
 #include "SettingsHandler.h"
+#include "ConsoleHandler.h"
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -273,10 +275,12 @@ void __cdecl operator delete(void* p, LPCSTR lpszFileName, int nLine);
 void Trace(const wchar_t* pszFormat, ...);
 
 #define TRACE		::Trace
+#define TRACE_KEY	__noop
 
 #else
 
 #define TRACE		__noop
+#define TRACE_KEY	__noop
 
 #endif // _DEBUG
 

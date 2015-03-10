@@ -60,10 +60,7 @@ struct UserCredentials
 			else
 			{
 				// CreateProcessWithLogonW & LOGON_NETCREDENTIALS_ONLY fails if domain is NULL
-				wchar_t szComputerName[MAX_COMPUTERNAME_LENGTH + 1];
-				DWORD   dwComputerNameLen = ARRAYSIZE(szComputerName);
-				if( ::GetComputerName(szComputerName, &dwComputerNameLen) )
-					strDomain = szComputerName;
+				strDomain = Helpers::GetComputerName();
 			}
 
 			if (!strDomain.empty())
@@ -105,7 +102,7 @@ class ConsoleHandler
 			const UserCredentials& userCredentials,
 			const wstring& strInitialCmd,
 			DWORD dwBasePriority,
-			const wstring& strExtraEnv,
+			const std::vector<std::shared_ptr<VarEnv>>& extraEnv,
 			DWORD dwStartupRows,
 			DWORD dwStartupColumns
 		);
@@ -117,7 +114,7 @@ class ConsoleHandler
 			const wstring& strInitialDir,
 			const wstring& strInitialCmd,
 			DWORD dwBasePriority,
-			const wstring& strExtraEnv
+			const std::vector<std::shared_ptr<VarEnv>>& extraEnv
 		);
 
 		void AttachToShellProcess(
@@ -143,7 +140,7 @@ class ConsoleHandler
 		void StopScrolling();
 		void ResumeScrolling();
 
-		static void UpdateEnvironmentBlock();
+		static void UpdateCurrentUserEnvironmentBlock();
 
 		inline DWORD GetConsolePid(void) const { return m_dwConsolePid; }
 		inline bool  IsElevated(void) const { return m_boolIsElevated; }
@@ -154,12 +151,15 @@ class ConsoleHandler
 		void SetWindowPos(int X, int Y, int cx, int cy, UINT uFlags);
 		void ShowWindow(int nCmdShow);
 		void SendTextToConsole(const wchar_t* pszText);
+		void Clear();
+		void SendCtrlC();
 
 		std::wstring GetCurrentDirectory(void) const;
 		DWORD        GetLastProcessId(void) const;
 		bool         SelectWord(const COORD& coordCurrent, COORD& coordLeft, COORD& coordRight) const;
 		bool         SearchText(CString& text, bool bNext, const COORD& coordCurrent, COORD& coordLeft, COORD& coordRight) const;
 		bool         ClickLink(const COORD& coordCurrent) const;
+		std::wstring GetFontInfo(void) const;
 
 	private:
 
@@ -176,7 +176,7 @@ class ConsoleHandler
 			const UserCredentials& userCredentials,
 			const wstring& strInitialCmd,
 			DWORD dwBasePriority,
-			const wstring& strExtraEnv,
+			const std::vector<std::shared_ptr<VarEnv>>& extraEnv,
 			PROCESS_INFORMATION& pi
 		);
 

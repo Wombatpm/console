@@ -44,11 +44,12 @@ void PageSettingsTabsEnv::Load(shared_ptr<TabData>& tabData)
 	DoDataExchange(DDX_LOAD);
 
 	m_listCtrl.DeleteAllItems();
-	for(size_t i = 0; i < m_tabData->strEnvVariables.size(); ++i)
+	for(size_t i = 0; i < m_tabData->environmentVariables.size(); ++i)
 	{
-		int nItem = m_listCtrl.InsertItem(m_listCtrl.GetItemCount(), m_tabData->strEnvVariables[i].c_str());
-		m_listCtrl.SetCheckState(nItem, m_tabData->bEnvChecked[i]);
-		m_listCtrl.SetItemText(nItem, 1, m_tabData->strEnvValues[i].c_str());
+		int nItem = m_listCtrl.InsertItem(m_listCtrl.GetItemCount(), m_tabData->environmentVariables[i]->strEnvVariable.c_str());
+		m_listCtrl.SetCheckState(nItem, m_tabData->environmentVariables[i]->bEnvChecked);
+
+		m_listCtrl.SetItemText(nItem, 1, m_tabData->environmentVariables[i]->strEnvValue.c_str());
 	}
 }
 
@@ -56,9 +57,7 @@ void PageSettingsTabsEnv::Save()
 {
 	DoDataExchange(DDX_SAVE);
 
-	m_tabData->strEnvVariables.clear();
-	m_tabData->strEnvValues.clear();
-	m_tabData->bEnvChecked.clear();
+	m_tabData->environmentVariables.clear();
 
 	for(int nItem = 0; nItem < m_listCtrl.GetItemCount(); ++nItem)
 	{
@@ -67,9 +66,11 @@ void PageSettingsTabsEnv::Save()
 		CString strValue;
 		m_listCtrl.GetItemText(nItem, 1, strValue);
 
-		m_tabData->strEnvVariables.push_back(strVariable.GetString());
-		m_tabData->strEnvValues.push_back(strValue.GetString());
-		m_tabData->bEnvChecked.push_back(m_listCtrl.GetCheckState(nItem)? true : false);
+		std::shared_ptr<VarEnv> varenv (new VarEnv);
+		varenv->strEnvVariable = strVariable.GetString();
+		varenv->strEnvValue = strValue.GetString();
+		varenv->bEnvChecked = m_listCtrl.GetCheckState(nItem)? true : false;
+		m_tabData->environmentVariables.push_back(varenv);
 	}
 }
 
@@ -116,7 +117,7 @@ LRESULT PageSettingsTabsEnv::OnClickedBtnEnvEdit(WORD /*wNotifyCode*/, WORD /*wI
 {
 	int nItem = m_listCtrl.GetSelectedIndex();
 	if( nItem < 0 || nItem >= m_listCtrl.GetItemCount() ) return 0;
-	
+
 	CString strVariable;
 	m_listCtrl.GetItemText(nItem, 0, strVariable);
 	CString strValue;

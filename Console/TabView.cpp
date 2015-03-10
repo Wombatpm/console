@@ -64,13 +64,13 @@ BOOL TabView::PreTranslateMessage(MSG* pMsg)
 		// return FALSE if no char is posted
 		if( !TranslateMessageEx(pMsg, TM_POSTCHARBREAKS) )
 		{
-			TRACE(L"TabView::PreTranslateMessage Msg not translated: 0x%04X, wParam: 0x%08X, lParam: 0x%08X\n", pMsg->message, pMsg->wParam, pMsg->lParam);
+			TRACE_KEY(L"TabView::PreTranslateMessage Msg not translated: 0x%04X, wParam: 0x%08X, lParam: 0x%08X\n", pMsg->message, pMsg->wParam, pMsg->lParam);
 			::DispatchMessage(pMsg);
 		}
 		else
 		{
 			wLastVirtualKey = static_cast<WORD>(pMsg->wParam);
-			TRACE(L"TabView::PreTranslateMessage Msg translated: 0x%04X, wParam: 0x%08X, lParam: 0x%08X\n", pMsg->message, pMsg->wParam, pMsg->lParam);
+			TRACE_KEY(L"TabView::PreTranslateMessage Msg translated: 0x%04X, wParam: 0x%08X, lParam: 0x%08X\n", pMsg->message, pMsg->wParam, pMsg->lParam);
 		}
 
 		return TRUE;
@@ -169,7 +169,7 @@ HWND TabView::CreateNewConsole(ConsoleViewCreate* consoleViewCreate, const wstri
 			// Display a dialog box to request credentials.
 			CREDUI_INFO ui;
 			ui.cbSize = sizeof(ui);
-			ui.hwndParent = m_hWnd;
+			ui.hwndParent = ::IsWindowVisible(m_mainFrame.m_hWnd)? m_mainFrame.m_hWnd : NULL;
 			ui.pszMessageText = m_tabData->strShell.c_str();
 			ui.pszCaptionText = L"Run as different user";
 			ui.hbmBanner = NULL;
@@ -256,7 +256,7 @@ HWND TabView::CreateNewConsole(ConsoleViewCreate* consoleViewCreate, const wstri
 						szPassword,
 						&maxLenPassword
 						) )
-						Win32Exception::ThrowFromLastError("CredUIPromptForWindowsCredentials");
+						Win32Exception::ThrowFromLastError("CredUnPackAuthenticationBuffer");
 
 					userCredentials.SetUser(szUser);
 					userCredentials.password = szPassword;
@@ -305,7 +305,7 @@ HWND TabView::CreateNewConsole(ConsoleViewCreate* consoleViewCreate, const wstri
 
 			if (dlg.DoModal() != IDOK) return 0;
 
-			userCredentials.user     = dlg.GetUser();
+			userCredentials.SetUser(dlg.GetUser());
 			userCredentials.password = dlg.GetPassword();
 #endif
 		}
@@ -333,7 +333,7 @@ HWND TabView::CreateNewConsole(ConsoleViewCreate* consoleViewCreate, const wstri
 			strMessage.Format(IDS_ERR_TAB_CREATE_FAILED, m_tabData->strTitle.c_str(), m_tabData->strShell.c_str());
 		}
 
-		::MessageBox(m_hWnd, strMessage, L"Error", MB_OK|MB_ICONERROR);
+		MessageBox(strMessage, L"Error", MB_OK|MB_ICONERROR);
 
 		return 0;
 	}
@@ -396,13 +396,15 @@ void TabView::SetResizing(bool bResizing)
   }
 }
 
-void TabView::MainframeMoving()
+bool TabView::MainframeMoving()
 {
+  bool bRelative = false;
   MutexLock	viewMapLock(m_viewsMutex);
   for (ConsoleViewMap::iterator it = m_views.begin(); it != m_views.end(); ++it)
   {
-    it->second->MainframeMoving();
+    bRelative |= it->second->MainframeMoving();
   }
+  return bRelative;
 }
 
 void TabView::SetTitle(const CString& strTitle)
@@ -717,6 +719,20 @@ void TabView::SendTextToConsoles(const wchar_t* pszText)
 
 /////////////////////////////////////////////////////////////////////////////
 
+void TabView::SendCtrlCToConsoles()
+{
+	MutexLock	viewMapLock(m_viewsMutex);
+	for (ConsoleViewMap::iterator it = m_views.begin(); it != m_views.end(); ++it)
+	{
+		if( it->second->IsGrouped() )
+			it->second->GetConsoleHandler().SendCtrlC();
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+
 void TabView::Group(bool b)
 {
   MutexLock	viewMapLock(m_viewsMutex);
@@ -816,4 +832,28 @@ void TabView::OnPaneChanged(void)
 {
   SetAppActiveStatus(m_mainFrame.GetAppActiveStatus());
   SetActive(true);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+void TabView::Diagnose(HANDLE hFile)
+{
+	MutexLock viewMapLock(m_viewsMutex);
+
+	std::shared_ptr<ConsoleView> activeConsole = this->GetActiveConsole(_T(__FUNCTION__));
+
+	for(auto console = m_views.begin(); console != m_views.end(); ++console)
+	{
+		WindowSettings& windowSettings = g_settingsHandler->GetAppearanceSettings().windowSettings;
+		wstring strViewTitle = m_mainFrame.FormatTitle(windowSettings.strTabTitleFormat, this, console->second);
+
+		std::wstring dummy =
+			(console->second == activeConsole ? std::wstring(L"  View (active): ") : std::wstring(L"  View: "))
+			+ strViewTitle;
+		Helpers::WriteLine(hFile, dummy);
+		Helpers::WriteLine(hFile, console->second->GetConsoleHandler().GetFontInfo());
+	}
 }

@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug aero|Win32">
-      <Configuration>Debug aero</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug aero|x64">
-      <Configuration>Debug aero</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -17,12 +9,12 @@
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release aero|Win32">
-      <Configuration>Release aero</Configuration>
+    <ProjectConfiguration Include="Debug Legacy|Win32">
+      <Configuration>Debug Legacy</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release aero|x64">
-      <Configuration>Release aero</Configuration>
+    <ProjectConfiguration Include="Debug Legacy|x64">
+      <Configuration>Debug Legacy</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
@@ -33,67 +25,79 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Release Legacy|Win32">
+      <Configuration>Release Legacy</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release Legacy|x64">
+      <Configuration>Release Legacy</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6EA5C354-A242-49F3-88D1-559EACA7FB8A}</ProjectGuid>
     <RootNamespace>Console</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
-    <UseOfAtl>false</UseOfAtl>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
+    <UseOfAtl>false</UseOfAtl>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+    <UseOfAtl>false</UseOfAtl>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
     <UseOfAtl>false</UseOfAtl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
-    <UseOfAtl>false</UseOfAtl>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
-    <UseOfAtl>false</UseOfAtl>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <UseOfAtl>false</UseOfAtl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
+    <UseOfAtl>false</UseOfAtl>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+    <UseOfAtl>false</UseOfAtl>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
     <UseOfAtl>false</UseOfAtl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
-    <UseOfAtl>false</UseOfAtl>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <UseOfAtl>false</UseOfAtl>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'" Label="PropertySheets">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
   </ImportGroup>
@@ -101,15 +105,15 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
   </ImportGroup>
@@ -117,95 +121,91 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">..\bin\$(Platform)\$(Configuration)\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\bin\$(Platform)\$(Configuration)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">..\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">..\obj\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\obj\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">..\obj\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">..\bin\$(Platform)\$(Configuration)\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\bin\$(Platform)\$(Configuration)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">..\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">..\obj\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\obj\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">..\obj\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkIncremental>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">..\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">..\obj\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">..\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">..\obj\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\obj\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\obj\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">..\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">..\obj\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">..\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">..\obj\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">false</LinkIncremental>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'" />
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
-    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
-    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'" />
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'" />
-    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'" />
-    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'" />
-    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'" />
-    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'" />
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'" />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">
+    <IncludePath>G:\gitstuff\boost_1_57_0;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\WinDDK\7600.16385.1\inc\atl71;G:\gitstuff\boost_1_55_0;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\WinDDK\7600.16385.1\lib\ATL\i386;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">
-    <IncludePath>C:\WinDDK\7600.16385.1\inc\atl71;G:\gitstuff\boost_1_55_0;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\WinDDK\7600.16385.1\lib\ATL\i386;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">
-    <IncludePath>C:\WinDDK\7600.16385.1\inc\atl71;G:\gitstuff\boost_1_55_0;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\WinDDK\7600.16385.1\lib\ATL\i386;$(LibraryPath)</LibraryPath>
+    <IncludePath>G:\gitstuff\boost_1_57_0;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\WinDDK\7600.16385.1\inc\atl71;G:\gitstuff\boost_1_55_0;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\WinDDK\7600.16385.1\lib\ATL\i386;$(LibraryPath)</LibraryPath>
+    <IncludePath>G:\gitstuff\boost_1_57_0;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">
-    <IncludePath>C:\WinDDK\7600.16385.1\inc\atl71;G:\gitstuff\boost_1_55_0;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\WinDDK\7600.16385.1\lib\ATL\amd64;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">
-    <IncludePath>C:\WinDDK\7600.16385.1\inc\atl71;G:\gitstuff\boost_1_55_0;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\WinDDK\7600.16385.1\lib\ATL\amd64;$(LibraryPath)</LibraryPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">
+    <IncludePath>G:\gitstuff\boost_1_57_0;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\WinDDK\7600.16385.1\inc\atl71;G:\gitstuff\boost_1_55_0;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\WinDDK\7600.16385.1\lib\ATL\amd64;$(LibraryPath)</LibraryPath>
+    <IncludePath>G:\gitstuff\boost_1_57_0;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\WinDDK\7600.16385.1\inc\atl71;G:\gitstuff\boost_1_55_0;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\WinDDK\7600.16385.1\lib\ATL\amd64;$(LibraryPath)</LibraryPath>
+    <IncludePath>G:\gitstuff\boost_1_57_0;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">
+    <IncludePath>G:\gitstuff\boost_1_57_0;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">
+    <IncludePath>G:\gitstuff\boost_1_57_0;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -237,7 +237,7 @@
       <AdditionalIncludeDirectories>$(IntDir);../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>..\FreeImage\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;Muiload.lib;imm32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\FreeImage\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;psapi.lib;Muiload.lib;imm32.lib;%(AdditionalDependencies);netapi32.lib</AdditionalDependencies>
       <DelayLoadDLLs>uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -253,8 +253,11 @@
       <Command>copy "..\setup\dlls\FreeImage.dll" "..\bin\$(Platform)\$(Configuration)\"
 copy "..\setup\dlls\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -286,7 +289,7 @@ copy "..\setup\dlls\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</C
       <AdditionalIncludeDirectories>$(IntDir);../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>..\FreeImage\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;Muiload.lib;Credui.lib;imm32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\FreeImage\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;Muiload.lib;Credui.lib;imm32.lib;%(AdditionalDependencies);netapi32.lib</AdditionalDependencies>
       <DelayLoadDLLs>uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -302,6 +305,61 @@ copy "..\setup\dlls\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</C
       <Command>copy "..\setup\dlls\FreeImage.dll" "..\bin\$(Platform)\$(Configuration)\"
 copy "..\setup\dlls\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <TargetEnvironment>X64</TargetEnvironment>
+      <GenerateStublessProxies>true</GenerateStublessProxies>
+      <TypeLibraryName>$(IntDir)Console.tlb</TypeLibraryName>
+      <HeaderFileName>Console.h</HeaderFileName>
+      <DllDataFileName>
+      </DllDataFileName>
+      <InterfaceIdentifierFileName>Console_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>Console_p.c</ProxyFileName>
+    </Midl>
+    <ClCompile>
+      <AdditionalOptions>/Zm200</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../TabbingFramework;../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>..\FreeImage\x64\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;psapi.lib;Muiload.lib;imm32.lib;%(AdditionalDependencies);netapi32.lib</AdditionalDependencies>
+      <DelayLoadDLLs>uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX64</TargetMachine>
+      <IgnoreSpecificDefaultLibraries>olepro32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <SetChecksum>false</SetChecksum>
+    </Link>
+    <PostBuildEvent>
+      <Message>FreeImage</Message>
+      <Command>copy "..\setup\dlls\x64\FreeImage.dll" "..\bin\$(Platform)\$(Configuration)\"
+copy "..\setup\dlls\x64\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</Command>
+    </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
@@ -320,55 +378,6 @@ copy "..\setup\dlls\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</C
       <AdditionalOptions>/Zm200</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>../TabbingFramework;../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <TreatWarningAsError>true</TreatWarningAsError>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Link>
-      <AdditionalDependencies>..\FreeImage\x64\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;Muiload.lib;imm32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
-      <TargetMachine>MachineX64</TargetMachine>
-      <IgnoreSpecificDefaultLibraries>olepro32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <SetChecksum>false</SetChecksum>
-    </Link>
-    <PostBuildEvent>
-      <Message>FreeImage</Message>
-      <Command>copy "..\setup\dlls\x64\FreeImage.dll" "..\bin\$(Platform)\$(Configuration)\"
-copy "..\setup\dlls\x64\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">
-    <Midl>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
-      <TargetEnvironment>X64</TargetEnvironment>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)Console.tlb</TypeLibraryName>
-      <HeaderFileName>Console.h</HeaderFileName>
-      <DllDataFileName>
-      </DllDataFileName>
-      <InterfaceIdentifierFileName>Console_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>Console_p.c</ProxyFileName>
-    </Midl>
-    <ClCompile>
-      <AdditionalOptions>/Zm200</AdditionalOptions>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>../TabbingFramework;../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;_USE_AERO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -384,7 +393,7 @@ copy "..\setup\dlls\x64\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\
       <AdditionalIncludeDirectories>$(IntDir);../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>..\FreeImage\x64\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;Muiload.lib;Credui.lib;imm32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\FreeImage\x64\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;Muiload.lib;Credui.lib;imm32.lib;%(AdditionalDependencies);netapi32.lib</AdditionalDependencies>
       <DelayLoadDLLs>uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -400,8 +409,11 @@ copy "..\setup\dlls\x64\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\
       <Command>copy "..\setup\dlls\x64\FreeImage.dll" "..\bin\$(Platform)\$(Configuration)\"
 copy "..\setup\dlls\x64\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -431,7 +443,7 @@ copy "..\setup\dlls\x64\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\
       <AdditionalIncludeDirectories>$(IntDir);../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>..\FreeImage\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;Muiload.lib;imm32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\FreeImage\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;Muiload.lib;imm32.lib;%(AdditionalDependencies);netapi32.lib</AdditionalDependencies>
       <DelayLoadDLLs>uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -442,6 +454,116 @@ copy "..\setup\dlls\x64\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SetChecksum>true</SetChecksum>
     </Link>
+    <PostBuildEvent>
+      <Message>FreeImage</Message>
+      <Command>copy "..\setup\dlls\FreeImage.dll" "..\bin\$(Platform)\$(Configuration)\"
+copy "..\setup\dlls\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</Command>
+    </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <TargetEnvironment>X64</TargetEnvironment>
+      <GenerateStublessProxies>true</GenerateStublessProxies>
+      <TypeLibraryName>$(IntDir)Console.tlb</TypeLibraryName>
+      <HeaderFileName>Console.h</HeaderFileName>
+      <DllDataFileName>
+      </DllDataFileName>
+      <InterfaceIdentifierFileName>Console_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>Console_p.c</ProxyFileName>
+    </Midl>
+    <ClCompile>
+      <AdditionalOptions>/Zm200</AdditionalOptions>
+      <AdditionalIncludeDirectories>../TabbingFramework;../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>..\FreeImage\x64\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;Muiload.lib;imm32.lib;%(AdditionalDependencies);netapi32.lib</AdditionalDependencies>
+      <DelayLoadDLLs>uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX64</TargetMachine>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>olepro32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SetChecksum>true</SetChecksum>
+    </Link>
+    <PostBuildEvent>
+      <Message>FreeImage</Message>
+      <Command>copy "..\setup\dlls\x64\FreeImage.dll" "..\bin\$(Platform)\$(Configuration)\"
+copy "..\setup\dlls\x64\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</Command>
+    </PostBuildEvent>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <GenerateStublessProxies>true</GenerateStublessProxies>
+      <TypeLibraryName>$(IntDir)Console.tlb</TypeLibraryName>
+      <HeaderFileName>Console.h</HeaderFileName>
+      <DllDataFileName>
+      </DllDataFileName>
+      <InterfaceIdentifierFileName>Console_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>Console_p.c</ProxyFileName>
+    </Midl>
+    <ClCompile>
+      <AdditionalOptions>/Zm200</AdditionalOptions>
+      <AdditionalIncludeDirectories>../TabbingFramework;../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;NDEBUG;_USE_AERO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;_USE_AERO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>..\FreeImage\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;Muiload.lib;Credui.lib;imm32.lib;%(AdditionalDependencies);netapi32.lib</AdditionalDependencies>
+      <DelayLoadDLLs>uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+      <IgnoreSpecificDefaultLibraries>olepro32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <SetChecksum>true</SetChecksum>
+    </Link>
+    <Manifest>
+      <AdditionalManifestFiles>res\Console.exe.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
     <PostBuildEvent>
       <Message>FreeImage</Message>
       <Command>copy "..\setup\dlls\FreeImage.dll" "..\bin\$(Platform)\$(Configuration)\"
@@ -464,58 +586,6 @@ copy "..\setup\dlls\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</C
     <ClCompile>
       <AdditionalOptions>/Zm200</AdditionalOptions>
       <AdditionalIncludeDirectories>../TabbingFramework;../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <TreatWarningAsError>true</TreatWarningAsError>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Link>
-      <AdditionalDependencies>..\FreeImage\x64\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;Muiload.lib;imm32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <SubSystem>Windows</SubSystem>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
-      <TargetMachine>MachineX64</TargetMachine>
-      <IgnoreAllDefaultLibraries>
-      </IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>olepro32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SetChecksum>true</SetChecksum>
-    </Link>
-    <PostBuildEvent>
-      <Message>FreeImage</Message>
-      <Command>copy "..\setup\dlls\x64\FreeImage.dll" "..\bin\$(Platform)\$(Configuration)\"
-copy "..\setup\dlls\x64\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</Command>
-    </PostBuildEvent>
-    <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-    </ProjectReference>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">
-    <Midl>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
-      <TargetEnvironment>Win32</TargetEnvironment>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)Console.tlb</TypeLibraryName>
-      <HeaderFileName>Console.h</HeaderFileName>
-      <DllDataFileName>
-      </DllDataFileName>
-      <InterfaceIdentifierFileName>Console_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>Console_p.c</ProxyFileName>
-    </Midl>
-    <ClCompile>
-      <AdditionalOptions>/Zm200</AdditionalOptions>
-      <AdditionalIncludeDirectories>../TabbingFramework;../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;NDEBUG;_USE_AERO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -530,73 +600,25 @@ copy "..\setup\dlls\x64\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\
       <AdditionalIncludeDirectories>$(IntDir);../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>..\FreeImage\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;Muiload.lib;Credui.lib;imm32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\FreeImage\x64\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;Muiload.lib;Credui.lib;imm32.lib;%(AdditionalDependencies);netapi32.lib</AdditionalDependencies>
       <DelayLoadDLLs>uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <TargetMachine>MachineX86</TargetMachine>
+      <TargetMachine>MachineX64</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>olepro32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <SetChecksum>true</SetChecksum>
     </Link>
+    <PostBuildEvent>
+      <Message>FreeImage</Message>
+      <Command>copy "..\setup\dlls\x64\FreeImage.dll" "..\bin\$(Platform)\$(Configuration)\"
+copy "..\setup\dlls\x64\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</Command>
+    </PostBuildEvent>
     <Manifest>
-      <AdditionalManifestFiles>res\Console.exe.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
     </Manifest>
-    <PostBuildEvent>
-      <Message>FreeImage</Message>
-      <Command>copy "..\setup\dlls\FreeImage.dll" "..\bin\$(Platform)\$(Configuration)\"
-copy "..\setup\dlls\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">
-    <Midl>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
-      <TargetEnvironment>X64</TargetEnvironment>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)Console.tlb</TypeLibraryName>
-      <HeaderFileName>Console.h</HeaderFileName>
-      <DllDataFileName>
-      </DllDataFileName>
-      <InterfaceIdentifierFileName>Console_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>Console_p.c</ProxyFileName>
-    </Midl>
-    <ClCompile>
-      <AdditionalOptions>/Zm200</AdditionalOptions>
-      <AdditionalIncludeDirectories>../TabbingFramework;../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;NDEBUG;_USE_AERO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <TreatWarningAsError>true</TreatWarningAsError>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>NDEBUG;_USE_AERO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);../wtl/wtl/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Link>
-      <AdditionalDependencies>..\FreeImage\x64\FreeImagePlus.lib;delayimp.lib;htmlhelp.lib;userenv.lib;Muiload.lib;Credui.lib;imm32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <SubSystem>Windows</SubSystem>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <DataExecutionPrevention>
-      </DataExecutionPrevention>
-      <TargetMachine>MachineX64</TargetMachine>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <IgnoreSpecificDefaultLibraries>olepro32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <SetChecksum>true</SetChecksum>
-    </Link>
-    <PostBuildEvent>
-      <Message>FreeImage</Message>
-      <Command>copy "..\setup\dlls\x64\FreeImage.dll" "..\bin\$(Platform)\$(Configuration)\"
-copy "..\setup\dlls\x64\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\"</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AboutDlg.cpp" />
@@ -628,14 +650,14 @@ copy "..\setup\dlls\x64\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\
     <ClCompile Include="SelectionHandler.cpp" />
     <ClCompile Include="SettingsHandler.cpp" />
     <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TabView.cpp" />
     <ClCompile Include="Wallpaper.cpp" />
@@ -703,28 +725,10 @@ copy "..\setup\dlls\x64\FreeImagePlus.dll" "..\bin\$(Platform)\$(Configuration)\
     <None Include="..\help\html\settings_tabs_main.html" />
     <CustomBuild Include="..\README.md">
       <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">changelog.html</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">changelog.html</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">changelog.html</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">changelog.html</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">changelog.html</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">@echo off
-cd /d $(IntDir)
-
-echo ^&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"^&gt; &gt;%(RootDir)%(Directory)help\html\changelog.html
-echo ^&lt;html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
-echo ^&lt;head^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
-echo ^&lt;title^&gt;Changelog^&lt;/title^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
-echo ^&lt;meta http-equiv="content-type" content='text/html; charset=utf-8' /^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
-echo ^&lt;link rel="stylesheet" type="text/css" href="../styles/help.css" /^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
-echo ^&lt;/head^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
-echo ^&lt;body^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
-
-csplit --quiet %(FullPath) /^^Changelog$/
-pandoc --from=markdown --to=html xx01 &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
-
-echo ^&lt;/body^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
-echo ^&lt;/html^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">%(RootDir)%(Directory)help\html\changelog.html</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">changelog.html</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">@echo off
 cd /d $(IntDir)
 
@@ -743,7 +747,7 @@ pandoc --from=markdown --to=html xx01 &gt;&gt;%(RootDir)%(Directory)help\html\ch
 echo ^&lt;/body^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
 echo ^&lt;/html^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)help\html\changelog.html</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">@echo off
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">@echo off
 cd /d $(IntDir)
 
 echo ^&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"^&gt; &gt;%(RootDir)%(Directory)help\html\changelog.html
@@ -760,7 +764,7 @@ pandoc --from=markdown --to=html xx01 &gt;&gt;%(RootDir)%(Directory)help\html\ch
 
 echo ^&lt;/body^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
 echo ^&lt;/html^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">%(RootDir)%(Directory)help\html\changelog.html</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">%(RootDir)%(Directory)help\html\changelog.html</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">@echo off
 cd /d $(IntDir)
 
@@ -779,7 +783,7 @@ pandoc --from=markdown --to=html xx01 &gt;&gt;%(RootDir)%(Directory)help\html\ch
 echo ^&lt;/body^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
 echo ^&lt;/html^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)help\html\changelog.html</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">@echo off
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">@echo off
 cd /d $(IntDir)
 
 echo ^&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"^&gt; &gt;%(RootDir)%(Directory)help\html\changelog.html
@@ -796,8 +800,7 @@ pandoc --from=markdown --to=html xx01 &gt;&gt;%(RootDir)%(Directory)help\html\ch
 
 echo ^&lt;/body^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
 echo ^&lt;/html^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html</Command>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">false</LinkObjects>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">false</LinkObjects>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">%(RootDir)%(Directory)help\html\changelog.html</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">@echo off
 cd /d $(IntDir)
 
@@ -817,7 +820,7 @@ echo ^&lt;/body^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
 echo ^&lt;/html^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html</Command>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">@echo off
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">@echo off
 cd /d $(IntDir)
 
 echo ^&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"^&gt; &gt;%(RootDir)%(Directory)help\html\changelog.html
@@ -834,8 +837,8 @@ pandoc --from=markdown --to=html xx01 &gt;&gt;%(RootDir)%(Directory)help\html\ch
 
 echo ^&lt;/body^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
 echo ^&lt;/html^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html</Command>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">false</LinkObjects>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">false</LinkObjects>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">false</LinkObjects>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">false</LinkObjects>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">@echo off
 cd /d $(IntDir)
 
@@ -855,47 +858,58 @@ echo ^&lt;/body^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
 echo ^&lt;/html^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html</Command>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">changelog.html</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">%(RootDir)%(Directory)help\html\changelog.html</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">@echo off
+cd /d $(IntDir)
+
+echo ^&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"^&gt; &gt;%(RootDir)%(Directory)help\html\changelog.html
+echo ^&lt;html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
+echo ^&lt;head^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
+echo ^&lt;title^&gt;Changelog^&lt;/title^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
+echo ^&lt;meta http-equiv="content-type" content='text/html; charset=utf-8' /^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
+echo ^&lt;link rel="stylesheet" type="text/css" href="../styles/help.css" /^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
+echo ^&lt;/head^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
+echo ^&lt;body^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
+
+csplit --quiet %(FullPath) /^^Changelog$/
+pandoc --from=markdown --to=html xx01 &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
+
+echo ^&lt;/body^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html
+echo ^&lt;/html^&gt; &gt;&gt;%(RootDir)%(Directory)help\html\changelog.html</Command>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">false</LinkObjects>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">changelog.html</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)help\html\changelog.html</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">changelog.html</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">%(RootDir)%(Directory)help\html\changelog.html</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">changelog.html</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">%(RootDir)%(Directory)help\html\changelog.html</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">changelog.html</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)help\html\changelog.html</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">changelog.html</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">%(RootDir)%(Directory)help\html\changelog.html</Outputs>
     </CustomBuild>
     <None Include="..\help\html\text_formatting.html" />
     <None Include="..\setup\config\console.xml" />
     <None Include="res\Console.ico" />
-    <None Include="res\toolbar.bmp" />
-    <None Include="res\toolbar_aero.bmp" />
+    <None Include="res\SearchBar.rc2" />
+    <None Include="res\Toolbar.rc2" />
     <None Include="..\help\console.hhc" />
     <None Include="..\help\console.hhk" />
     <CustomBuild Include="..\help\console.hhp">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build CHM file</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">Build CHM file</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">hhc "%(FullPath)"
+if errorlevel 1 (
+copy "%(RootDir)%(Directory)%(Filename).chm" "$(TargetDir)"
+exit 0 )
+echo %(Filename)%(Extension) : error : failed to create CHM file
+</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">hhc "%(FullPath)"
 if errorlevel 1 (
 copy "%(RootDir)%(Directory)%(Filename).chm" "$(TargetDir)"
 exit 0 )
 echo %(Filename)%(Extension) : error : failed to create CHM file
 </Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Build CHM file</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">hhc "%(FullPath)"
-if errorlevel 1 (
-copy "%(RootDir)%(Directory)%(Filename).chm" "$(TargetDir)"
-exit 0 )
-echo %(Filename)%(Extension) : error : failed to create CHM file
-</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">Build CHM file</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">hhc "%(FullPath)"
-if errorlevel 1 (
-copy "%(RootDir)%(Directory)%(Filename).chm" "$(TargetDir)"
-exit 0 )
-echo %(Filename)%(Extension) : error : failed to create CHM file
-</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">Build CHM file</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">hhc "%(FullPath)"
 if errorlevel 1 (
 copy "%(RootDir)%(Directory)%(Filename).chm" "$(TargetDir)"
@@ -904,23 +918,25 @@ echo %(Filename)%(Extension) : error : failed to create CHM file
 </Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Build CHM file</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">hhc "%(FullPath)"
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">hhc "%(FullPath)"
 if errorlevel 1 (
 copy "%(RootDir)%(Directory)%(Filename).chm" "$(TargetDir)"
 exit 0 )
 echo %(Filename)%(Extension) : error : failed to create CHM file
 </Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">Build CHM file</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">hhc "%(FullPath)"
 if errorlevel 1 (
 copy "%(RootDir)%(Directory)%(Filename).chm" "$(TargetDir)"
 exit 0 )
 echo %(Filename)%(Extension) : error : failed to create CHM file
 </Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">hhc "%(FullPath)"
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">hhc "%(FullPath)"
 if errorlevel 1 (
 copy "%(RootDir)%(Directory)%(Filename).chm" "$(TargetDir)"
 exit 0 )
@@ -932,26 +948,36 @@ copy "%(RootDir)%(Directory)%(Filename).chm" "$(TargetDir)"
 exit 0 )
 echo %(Filename)%(Extension) : error : failed to create CHM file
 </Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">Build CHM file</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Build CHM file</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">Build CHM file</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Build CHM file</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug aero|Win32'">false</LinkObjects>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release aero|Win32'">false</LinkObjects>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">hhc "%(FullPath)"
+if errorlevel 1 (
+copy "%(RootDir)%(Directory)%(Filename).chm" "$(TargetDir)"
+exit 0 )
+echo %(Filename)%(Extension) : error : failed to create CHM file
+</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">Build CHM file</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">Build CHM file</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">Build CHM file</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">Build CHM file</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">false</LinkObjects>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug aero|x64'">false</LinkObjects>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release aero|x64'">false</LinkObjects>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|Win32'">false</LinkObjects>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release Legacy|Win32'">false</LinkObjects>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">false</LinkObjects>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">false</LinkObjects>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug Legacy|x64'">false</LinkObjects>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release Legacy|x64'">false</LinkObjects>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)%(Filename).chm</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)html\changelog.html</AdditionalInputs>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
-      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
     </CustomBuild>
     <None Include="..\help\html\acknowledgements.html" />
     <None Include="..\help\html\changelog.html" />
@@ -974,6 +1000,24 @@ echo %(Filename)%(Extension) : error : failed to create CHM file
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Console.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\fullscreen1_16.bmp" />
+    <Image Include="res\fullscreen1_20.bmp" />
+    <Image Include="res\fullscreen1_24.bmp" />
+    <Image Include="res\fullscreen1_32.bmp" />
+    <Image Include="res\fullscreen2_16.bmp" />
+    <Image Include="res\fullscreen2_20.bmp" />
+    <Image Include="res\fullscreen2_24.bmp" />
+    <Image Include="res\fullscreen2_32.bmp" />
+    <Image Include="res\search_16.bmp" />
+    <Image Include="res\search_20.bmp" />
+    <Image Include="res\search_24.bmp" />
+    <Image Include="res\search_32.bmp" />
+    <Image Include="res\toolbar_16.bmp" />
+    <Image Include="res\toolbar_20.bmp" />
+    <Image Include="res\toolbar_24.bmp" />
+    <Image Include="res\toolbar_32.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

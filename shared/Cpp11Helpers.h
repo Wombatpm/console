@@ -17,6 +17,41 @@ struct CloseHandleHelper
   };
 };
 
+class RevertToSelfHelper
+{
+	bool bIsLoggedOn;
+public:
+	RevertToSelfHelper()
+		: bIsLoggedOn(false)
+	{
+	}
+	~RevertToSelfHelper()
+	{
+		off();
+	}
+	void on(void)
+	{
+		bIsLoggedOn = true;
+	}
+	void off(void)
+	{
+		if( bIsLoggedOn )
+			::RevertToSelf();
+		bIsLoggedOn = false;
+	}
+};
+
+#ifdef _LMAPIBUF_
+struct NetApiBufferFreeHelper
+{
+  void operator()(void * toFree)
+  {
+    if( toFree )
+      ::NetApiBufferFree(static_cast<HANDLE>(toFree));
+  };
+};
+#endif
+
 #ifdef _COMBASEAPI_H_
 struct CoTaskMemFreeHelper
 {

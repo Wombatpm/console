@@ -7,6 +7,7 @@
 #include "ConsoleException.h"
 #include "ConsoleHandler.h"
 
+
 //////////////////////////////////////////////////////////////////////////////
 
 
@@ -149,6 +150,71 @@ void ConsoleHandler::RunAsAdministrator
 	}
 }
 
+std::wstring MergeEnvironmentVariables(
+	const void * environmentBlock,
+	const std::vector<std::shared_ptr<VarEnv>>& extraEnv)
+{
+	std::wstring strNewEnvironment;
+
+	std::map<std::wstring, std::wstring, __case_insensitive_compare> dictionary;
+
+	for(const wchar_t * p = static_cast<const wchar_t *>(environmentBlock);
+	    p && p[0];
+	    p += wcslen(p) + 1)
+	{
+		const wchar_t * equal = wcschr(p , L'=');
+		if( equal == nullptr ) continue;
+
+		dictionary[std::wstring(p, equal - p)] = std::wstring(equal + 1);
+	}
+
+	std::map<std::wstring, std::wstring, __case_insensitive_compare> extra;
+
+	for(auto i = extraEnv.cbegin(); i != extraEnv.cend(); ++i)
+	{
+		if( !i->get()->bEnvChecked ) continue;
+
+		extra[i->get()->strEnvVariable] = i->get()->strEnvValue;
+	}
+
+	// variable name has only one restriction: no =
+	std::wregex regexEnvVar(L"%[^=]+%");
+
+	// first pass (we add all variables without %%)
+	for(auto i = extra.begin(); i != extra.end();)
+	{
+		if( std::regex_search(i->second, regexEnvVar) )
+		{
+			++i;
+		}
+		else
+		{
+			dictionary[i->first] = i->second;
+
+			i = extra.erase(i);
+		}
+	}
+
+	// second pass (we add all variables with %%)
+	for(auto i = extra.begin(); i != extra.end(); ++i)
+	{
+		std::wstring str = Helpers::ExpandEnvironmentStrings(dictionary, i->second);
+		dictionary[i->first] = str;
+	}
+
+	for(auto i = dictionary.cbegin(); i != dictionary.cend(); ++i)
+	{
+		strNewEnvironment += i->first;
+		strNewEnvironment += L'=';
+		strNewEnvironment += i->second;
+		strNewEnvironment += L'\0';
+	}
+
+	strNewEnvironment += L'\0';
+
+	return strNewEnvironment;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -160,12 +226,15 @@ void ConsoleHandler::CreateShellProcess
 	const UserCredentials& userCredentials,
 	const wstring& strInitialCmd,
 	DWORD dwBasePriority,
-	const wstring& strExtraEnv,
+	const std::vector<std::shared_ptr<VarEnv>>& extraEnv,
 	PROCESS_INFORMATION& pi
 )
 {
 	std::unique_ptr<void, DestroyEnvironmentBlockHelper> userEnvironment;
 	std::unique_ptr<void, CloseHandleHelper>             userToken;
+	std::shared_ptr<void>                                userProfileKey;
+	RevertToSelfHelper                                   revertToSelfHelper;
+	std::vector<std::shared_ptr<VarEnv>>                 homeEnv;
 
 	if (userCredentials.strUsername.length() > 0)
 	{
@@ -179,82 +248,179 @@ void ConsoleHandler::CreateShellProcess
 				userCredentials.password.c_str(),
 				LOGON32_LOGON_INTERACTIVE,
 				LOGON32_PROVIDER_DEFAULT,
-				&hUserToken) || !::ImpersonateLoggedOnUser(hUserToken) )
+				&hUserToken) )
 			{
-				Win32Exception err("ImpersonateLoggedOnUser", ::GetLastError());
+				Win32Exception err("LogonUser", ::GetLastError());
 				throw ConsoleException(boost::str(boost::wformat(Helpers::LoadStringW(IDS_ERR_CANT_START_SHELL_AS_USER)) % L"?" % userCredentials.user % err.what()));
 			}
 			userToken.reset(hUserToken);
 
-			/*
+			if( !::ImpersonateLoggedOnUser(userToken.get()) )
+			{
+				Win32Exception err("ImpersonateLoggedOnUser", ::GetLastError());
+				throw ConsoleException(boost::str(boost::wformat(Helpers::LoadStringW(IDS_ERR_CANT_START_SHELL_AS_USER)) % L"?" % userCredentials.user % err.what()));
+			}
+			revertToSelfHelper.on();
+
+#if 0
 			// load user's profile
 			// seems to be necessary on WinXP for environment strings' expainsion to work properly
+			// only administrators or LOCALSYSTEM can load a profile since Windows XP SP2
 			PROFILEINFO userProfile;
 			::ZeroMemory(&userProfile, sizeof(PROFILEINFO));
 			userProfile.dwSize = sizeof(PROFILEINFO);
 			userProfile.lpUserName = const_cast<wchar_t*>(userCredentials.strUsername.c_str());
 
-			::LoadUserProfile(userToken.get(), &userProfile);
-			userProfileKey.reset(userProfile.hProfile, bind<BOOL>(::UnloadUserProfile, userToken.get(), _1));
-			*/
+			if( !::LoadUserProfile(userToken.get(), &userProfile) )
+			{
+				Win32Exception err("LoadUserProfile", ::GetLastError());
+				throw ConsoleException(boost::str(boost::wformat(Helpers::LoadStringW(IDS_ERR_CANT_START_SHELL_AS_USER)) % L"?" % userCredentials.user % err.what()));
+			}
+			userProfileKey.reset(userProfile.hProfile, std::bind<BOOL>(::UnloadUserProfile, userToken.get(), std::placeholders::_1));
+#endif
 
 			// load user's environment
-			void*	pEnvironment = nullptr;
+			void* pEnvironment = nullptr;
 			if( !::CreateEnvironmentBlock(&pEnvironment, userToken.get(), FALSE) )
 			{
 				Win32Exception err("CreateEnvironmentBlock", ::GetLastError());
-				::RevertToSelf();
 				throw ConsoleException(boost::str(boost::wformat(Helpers::LoadStringW(IDS_ERR_CANT_START_SHELL_AS_USER)) % L"?" % userCredentials.user % err.what()));
 			}
 			userEnvironment.reset(pEnvironment);
+
+#if 0
+			BYTE dummy[1024];
+			PSID psid = reinterpret_cast<PSID>(dummy);
+			DWORD cbSid = sizeof(dummy);
+			wchar_t szReferencedDomainName[DNLEN + 1] = L"";
+			DWORD cchReferencedDomainName = ARRAYSIZE(szReferencedDomainName);
+			SID_NAME_USE eUse;
+			if(!::LookupAccountName(
+				userCredentials.strDomain.c_str(),
+				userCredentials.strUsername.c_str(),
+				psid, &cbSid,
+				szReferencedDomainName, &cchReferencedDomainName,
+				&eUse))
+			{
+				Win32Exception err("LookupAccountName", ::GetLastError());
+				throw ConsoleException(boost::str(boost::wformat(Helpers::LoadStringW(IDS_ERR_CANT_START_SHELL_AS_USER)) % L"?" % userCredentials.user % err.what()));
+			}
+#endif
+
+			NET_API_STATUS nStatus;
+			LPWSTR pszComputerName = nullptr;
+			if(userCredentials.strDomain != Helpers::GetComputerName())
+			{
+				nStatus = ::NetGetDCName(NULL, userCredentials.strDomain.c_str(), reinterpret_cast<LPBYTE *>(&pszComputerName));
+				if(nStatus != NERR_Success && nStatus != NERR_DCNotFound)
+				{
+					Win32Exception err("NetGetDCName", nStatus);
+					throw ConsoleException(boost::str(boost::wformat(Helpers::LoadStringW(IDS_ERR_CANT_START_SHELL_AS_USER)) % L"?" % userCredentials.user % err.what()));
+				}
+			}
+			std::unique_ptr<void, NetApiBufferFreeHelper> dcName(pszComputerName);
+
+			LPUSER_INFO_3 pBuf3 = nullptr;
+			nStatus = ::NetUserGetInfo(pszComputerName, userCredentials.strUsername.c_str(), 3, reinterpret_cast<LPBYTE *>(&pBuf3));
+			if( nStatus != NERR_Success )
+			{
+				Win32Exception err("NetUserGetInfo", nStatus);
+				throw ConsoleException(boost::str(boost::wformat(Helpers::LoadStringW(IDS_ERR_CANT_START_SHELL_AS_USER)) % L"?" % userCredentials.user % err.what()));
+			}
+			std::unique_ptr<void, NetApiBufferFreeHelper> buf3(pBuf3);
+
+			std::wstring strHomeShare;
+			std::wstring strHomeDrive;
+			std::wstring strHomePath;
+			if( pBuf3->usri3_home_dir_drive && *pBuf3->usri3_home_dir_drive )
+			{
+				// home is on a net share
+				strHomeShare = pBuf3->usri3_home_dir;
+				strHomeDrive = pBuf3->usri3_home_dir_drive;
+				strHomePath  = L"\\";
+			}
+			else
+			{
+				std::wstring strHomeDir;
+
+				// local
+				if( pBuf3->usri3_home_dir && *pBuf3->usri3_home_dir )
+				{
+					// defined
+					strHomeDir = pBuf3->usri3_home_dir;
+				}
+				else
+				{
+					// undefined
+					// same as profile
+					wchar_t szUserProfileDirectory[_MAX_PATH] = L"";
+					DWORD   dwUserProfileDirectoryLen         = ARRAYSIZE(szUserProfileDirectory);
+					if( !::GetUserProfileDirectory(userToken.get(), szUserProfileDirectory, &dwUserProfileDirectoryLen) )
+					{
+						Win32Exception err("GetUserProfileDirectory", ::GetLastError());
+						throw ConsoleException(boost::str(boost::wformat(Helpers::LoadStringW(IDS_ERR_CANT_START_SHELL_AS_USER)) % L"?" % userCredentials.user % err.what()));
+					}
+
+					strHomeDir = szUserProfileDirectory;
+				}
+
+				strHomeDrive = strHomeDir.substr(0, 2);
+				strHomePath  = strHomeDir.substr(2);
+			}
+
+			TRACE(
+				L"HOMESHARE=%s\nHOMEDRIVE=%s\nHOMEPATH=%s\n",
+				strHomeShare.c_str(),
+				strHomeDrive.c_str(),
+				strHomePath.c_str());
+
+			if( !strHomeShare.empty() )
+				homeEnv.push_back(
+					std::shared_ptr<VarEnv>(
+						new VarEnv(std::wstring(L"HOMESHARE"), strHomeShare)));
+			if( !strHomeDrive.empty() )
+				homeEnv.push_back(
+					std::shared_ptr<VarEnv>(
+						new VarEnv(std::wstring(L"HOMEDRIVE"), strHomeDrive)));
+			if( !strHomePath.empty() )
+				homeEnv.push_back(
+					std::shared_ptr<VarEnv>(
+						new VarEnv(std::wstring(L"HOMEPATH"), strHomePath)));
 		}
 	}
+
+	// load environment block
+	if( !s_environmentBlock.get() )
+		ConsoleHandler::UpdateCurrentUserEnvironmentBlock();
+
+	// add specific environment variables defined in tad settings
+	wstring strNewEnvironment = MergeEnvironmentVariables(
+		userEnvironment.get()? userEnvironment.get() : s_environmentBlock.get(),
+		extraEnv);
+
+	// add missing home variables
+	if( !homeEnv.empty() )
+		strNewEnvironment = MergeEnvironmentVariables(
+		strNewEnvironment.c_str(),
+		homeEnv);
 
 	wstring	strShellCmdLine(strShell);
 
-	if (strShellCmdLine.length() == 0)
+	if( strShellCmdLine.empty() )
 	{
-		wchar_t	szComspec[MAX_PATH];
-
-		::ZeroMemory(szComspec, MAX_PATH*sizeof(wchar_t));
-
-		if (userEnvironment.get())
-		{
-			// resolve comspec when running as another user
-			wchar_t* pszComspec = reinterpret_cast<wchar_t*>(userEnvironment.get());
-
-			while ((pszComspec[0] != L'\x00') && (_wcsnicmp(pszComspec, L"comspec", 7) != 0)) pszComspec += wcslen(pszComspec)+1;
-
-			if (pszComspec[0] != L'\x00')
-			{
-				strShellCmdLine = (pszComspec + 8);
-			}
-
-			if (strShellCmdLine.length() == 0) strShellCmdLine = L"cmd.exe";
-		}
-		else
-		{
-			if (::GetEnvironmentVariable(L"COMSPEC", szComspec, MAX_PATH) > 0)
-			{
-				strShellCmdLine = szComspec;
-			}
-
-			if (strShellCmdLine.length() == 0) strShellCmdLine = L"cmd.exe";
-		}
+		strShellCmdLine = Helpers::GetEnvironmentVariable(strNewEnvironment.c_str(), L"ComSpec");
+		if( strShellCmdLine.empty() ) strShellCmdLine = L"cmd.exe";
 	}
 
-	if (strInitialCmd.length() > 0)
+	if( !strInitialCmd.empty())
 	{
 		strShellCmdLine += L" ";
 		strShellCmdLine += strInitialCmd;
 	}
 
-	wstring strStartupDir(
-		userToken.get() ?
-		Helpers::ExpandEnvironmentStringsForUser(userToken.get(), strInitialDir) :
-		Helpers::ExpandEnvironmentStrings(strInitialDir));
+	wstring strStartupDir = Helpers::ExpandEnvironmentStrings(strNewEnvironment.c_str(), strInitialDir);
 
-	if (strStartupDir.length() > 0)
+	if( !strStartupDir.empty() )
 	{
 		if ((*(strStartupDir.end() - 1) == L'\"') && (*strStartupDir.begin() != L'\"'))
 		{
@@ -279,13 +445,9 @@ void ConsoleHandler::CreateShellProcess
 		}
 	}
 
-	wstring strCmdLine(
-		userToken.get() ?
-		Helpers::ExpandEnvironmentStringsForUser(userToken.get(), strShellCmdLine) :
-		Helpers::ExpandEnvironmentStrings(strShellCmdLine));
+	wstring strCmdLine = Helpers::ExpandEnvironmentStrings(strNewEnvironment.c_str(), strShellCmdLine);
 
-	if( userToken.get() )
-		::RevertToSelf();
+	revertToSelfHelper.off();
 
 	// setup the startup info struct
 	STARTUPINFO si;
@@ -318,27 +480,6 @@ void ConsoleHandler::CreateShellProcess
 
 	// we must use CREATE_UNICODE_ENVIRONMENT here, since s_environmentBlock contains Unicode strings
 	DWORD dwStartupFlags = CREATE_NEW_CONSOLE|CREATE_SUSPENDED|CREATE_UNICODE_ENVIRONMENT|TabData::GetPriorityClass(dwBasePriority);
-
-	// TODO: not supported yet
-	//if (bDebugFlag) dwStartupFlags |= DEBUG_PROCESS;
-
-	// load environment block
-	if( !s_environmentBlock.get() )
-		ConsoleHandler::UpdateEnvironmentBlock();
-
-	// add specific environment variables defined in tad settings
-	wstring strNewEnvironment;
-	for(const wchar_t * p = static_cast<wchar_t *>(userEnvironment.get()? userEnvironment.get() : s_environmentBlock.get());
-	    p && p[0];
-	    p += wcslen(p) + 1)
-	{
-		strNewEnvironment += p;
-		strNewEnvironment += L'\0';
-	}
-
-	strNewEnvironment += strExtraEnv;
-
-	strNewEnvironment += L'\0';
 
 	if (userCredentials.strUsername.length() > 0)
 	{
@@ -391,7 +532,7 @@ void ConsoleHandler::StartShellProcess
 	const UserCredentials& userCredentials,
 	const wstring& strInitialCmd,
 	DWORD dwBasePriority,
-	const wstring& strExtraEnv,
+	const std::vector<std::shared_ptr<VarEnv>>& extraEnv,
 	DWORD dwStartupRows,
 	DWORD dwStartupColumns
 )
@@ -444,7 +585,7 @@ void ConsoleHandler::StartShellProcess
 
 		// wait for PID of shell launched in admin ConsoleZ
 		if (::WaitForSingleObject(pid.GetReqEvent(), 10000) == WAIT_TIMEOUT)
-			throw ConsoleException(boost::str(boost::wformat(Helpers::LoadString(IDS_ERR_DLL_INJECTION_FAILED)) % L"timeout"));
+			throw ConsoleException(boost::str(boost::wformat(Helpers::LoadString(IDS_ERR_DLL_INJECTION_FAILED)) % L"timeout (PID)"));
 
 		pi.dwProcessId = *pid.Get();
 		pi.hProcess = ::OpenProcess(SYNCHRONIZE, FALSE, pi.dwProcessId);
@@ -462,7 +603,7 @@ void ConsoleHandler::StartShellProcess
 			userCredentials,
 			strInitialCmd,
 			dwBasePriority,
-			strExtraEnv,
+			extraEnv,
 			pi
 		);
 	}
@@ -522,7 +663,7 @@ void ConsoleHandler::StartShellProcess
 
 	// wait for hook DLL to set console handle
 	if (::WaitForSingleObject(m_consoleParams.GetReqEvent(), 10000) == WAIT_TIMEOUT)
-		throw ConsoleException(boost::str(boost::wformat(Helpers::LoadString(IDS_ERR_DLL_INJECTION_FAILED)) % L"timeout"));
+		throw ConsoleException(boost::str(boost::wformat(Helpers::LoadString(IDS_ERR_DLL_INJECTION_FAILED)) % L"timeout (hook)"));
 
 	ShowWindow(SW_HIDE);
 }
@@ -539,7 +680,7 @@ void ConsoleHandler::StartShellProcessAsAdministrator
 	const wstring& strInitialDir,
 	const wstring& strInitialCmd,
 	DWORD dwBasePriority,
-	const wstring& strExtraEnv
+	const std::vector<std::shared_ptr<VarEnv>>& extraEnv
 )
 {
 	SharedMemory<DWORD> pid;
@@ -554,7 +695,7 @@ void ConsoleHandler::StartShellProcessAsAdministrator
 		userCredentials,
 		strInitialCmd,
 		dwBasePriority,
-		strExtraEnv,
+		extraEnv,
 		pi
 	);
 
@@ -563,7 +704,7 @@ void ConsoleHandler::StartShellProcessAsAdministrator
 
 	// wait for shared objects creation
 	if (::WaitForSingleObject(pid.GetRespEvent(), 10000) == WAIT_TIMEOUT)
-		throw ConsoleException(boost::str(boost::wformat(Helpers::LoadString(IDS_ERR_DLL_INJECTION_FAILED)) % L"timeout"));
+		throw ConsoleException(boost::str(boost::wformat(Helpers::LoadString(IDS_ERR_DLL_INJECTION_FAILED)) % L"timeout (shared objects creation)"));
 
 	// inject our hook DLL into console process
 	try
@@ -631,7 +772,7 @@ void ConsoleHandler::AttachToShellProcess(
 
 		// wait for hook DLL to set console handle
 		if (::WaitForSingleObject(m_consoleParams.GetReqEvent(), 10000) == WAIT_TIMEOUT)
-			throw ConsoleException(boost::str(boost::wformat(Helpers::LoadString(IDS_ERR_DLL_INJECTION_FAILED)) % L"timeout"));
+			throw ConsoleException(boost::str(boost::wformat(Helpers::LoadString(IDS_ERR_DLL_INJECTION_FAILED)) % L"timeout (hook2)"));
 
 		ShowWindow(SW_HIDE);
 	}
@@ -812,6 +953,55 @@ bool ConsoleHandler::ClickLink(const COORD& coordCurrent) const
 
 //////////////////////////////////////////////////////////////////////////////
 
+std::wstring ConsoleHandler::GetFontInfo(void) const
+{
+	std::wstring result(L"");
+
+	m_multipleInfo->fMask = MULTIPLEINFO_FONT;
+	if( ::SetEvent(m_multipleInfo.GetReqEvent()) &&
+	    ::WaitForSingleObject(m_multipleInfo.GetRespEvent(), 2000) == WAIT_OBJECT_0 )
+	{
+		result += L"font index: ";
+		result += std::to_wstring(m_multipleInfo->consoleFontInfo.nFont);
+		result += L"\r\nface name: ";
+		result += m_multipleInfo->consoleFontInfo.FaceName;
+		result += L"\r\nfont familly: ";
+		result += std::to_wstring(m_multipleInfo->consoleFontInfo.FontFamily);
+
+		if((m_multipleInfo->consoleFontInfo.FontFamily & 0xf0) == FF_DECORATIVE ) result += L" DECORATIVE";
+		if((m_multipleInfo->consoleFontInfo.FontFamily & 0xf0) == FF_DONTCARE   ) result += L" DONTCARE";
+		if((m_multipleInfo->consoleFontInfo.FontFamily & 0xf0) == FF_MODERN     ) result += L" MODERN";
+		if((m_multipleInfo->consoleFontInfo.FontFamily & 0xf0) == FF_ROMAN      ) result += L" ROMAN";
+		if((m_multipleInfo->consoleFontInfo.FontFamily & 0xf0) == FF_SCRIPT     ) result += L" SCRIPT";
+		if((m_multipleInfo->consoleFontInfo.FontFamily & 0xf0) == FF_SWISS      ) result += L" SWISS";
+
+		if((m_multipleInfo->consoleFontInfo.FontFamily & TMPF_FIXED_PITCH) == TMPF_FIXED_PITCH ) result += L" fixed pitch";
+		if((m_multipleInfo->consoleFontInfo.FontFamily & TMPF_VECTOR)      == TMPF_VECTOR      ) result += L" vector";
+		if((m_multipleInfo->consoleFontInfo.FontFamily & TMPF_DEVICE)      == TMPF_DEVICE      ) result += L" device";
+		if((m_multipleInfo->consoleFontInfo.FontFamily & TMPF_TRUETYPE)    == TMPF_TRUETYPE    ) result += L" true type";
+
+		result += L"\r\nfont weight: ";
+		result += std::to_wstring(m_multipleInfo->consoleFontInfo.FontWeight);
+		result += L"\r\nfont size: width=";
+		result += std::to_wstring(m_multipleInfo->coordFontSize.X);
+		result += L" height=";
+		result += std::to_wstring(m_multipleInfo->coordFontSize.Y);
+		result += L"\r\nmax window size: cols=";
+		result += std::to_wstring(m_consoleInfo->csbi.dwMaximumWindowSize.X);
+		//result += std::to_wstring(m_multipleInfo->consoleFontInfo.dwFontSize.X);
+		result += L" rows=";
+		result += std::to_wstring(m_consoleInfo->csbi.dwMaximumWindowSize.Y);
+		//result += std::to_wstring(m_multipleInfo->consoleFontInfo.dwFontSize.Y);
+	}
+
+	return result;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////
+
 bool ConsoleHandler::SearchText(CString& text, bool bNext, const COORD& coordCurrent, COORD& coordLeft, COORD& coordRight) const
 {
 	m_multipleInfo->fMask = MULTIPLEINFO_SEARCH_TEXT;
@@ -840,7 +1030,7 @@ bool ConsoleHandler::SearchText(CString& text, bool bNext, const COORD& coordCur
 
 //////////////////////////////////////////////////////////////////////////////
 
-void ConsoleHandler::UpdateEnvironmentBlock()
+void ConsoleHandler::UpdateCurrentUserEnvironmentBlock()
 {
 	void*	pEnvironment	= NULL;
 	HANDLE	hProcessToken	= NULL;
@@ -1039,7 +1229,7 @@ void ConsoleHandler::InjectHookDLL(PROCESS_INFORMATION& pi)
 
 		if (::WaitForSingleObject(wowProcess.get(), 5000) == WAIT_TIMEOUT)
 		{
-			throw ConsoleException(boost::str(boost::wformat(Helpers::LoadString(IDS_ERR_DLL_INJECTION_FAILED)) % L"timeout"));
+			throw ConsoleException(boost::str(boost::wformat(Helpers::LoadString(IDS_ERR_DLL_INJECTION_FAILED)) % L"timeout (ConsoleWow.exe)"));
 		}
 
 		::GetExitCodeProcess(wowProcess.get(), reinterpret_cast<DWORD*>(&fnWow64LoadLibrary));
@@ -1270,7 +1460,7 @@ void ConsoleHandler::InjectHookDLL2(PROCESS_INFORMATION& pi)
 
 		if (::WaitForSingleObject(wowProcess.get(), 5000) == WAIT_TIMEOUT)
 		{
-			throw ConsoleException(boost::str(boost::wformat(Helpers::LoadString(IDS_ERR_DLL_INJECTION_FAILED)) % L"timeout"));
+			throw ConsoleException(boost::str(boost::wformat(Helpers::LoadString(IDS_ERR_DLL_INJECTION_FAILED)) % L"timeout (ConsoleWow.exe)"));
 		}
 
 		::GetExitCodeProcess(wowProcess.get(), reinterpret_cast<DWORD*>(&fnWow64LoadLibrary));
@@ -1601,6 +1791,34 @@ void ConsoleHandler::SendTextToConsole(const wchar_t* pszText)
 #else
 	catch(std::exception&) { }
 #endif
+}
+
+void ConsoleHandler::Clear()
+{
+	NamedPipeMessage npmsg;
+	npmsg.type = NamedPipeMessage::CLEAR;
+
+	try
+	{
+		m_consoleMsgPipe.Write(&npmsg, sizeof(npmsg));
+	}
+	catch(std::exception&)
+	{
+	}
+}
+
+void ConsoleHandler::SendCtrlC()
+{
+	NamedPipeMessage npmsg;
+	npmsg.type = NamedPipeMessage::CTRL_C;
+
+	try
+	{
+		m_consoleMsgPipe.Write(&npmsg, sizeof(npmsg));
+	}
+	catch(std::exception&)
+	{
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

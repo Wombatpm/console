@@ -153,7 +153,7 @@ LRESULT ConsoleView::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, B
 				*userCredentials,
 				m_strCmdLineInitialCmd,
 				m_dwBasePriority == ULONG_MAX? m_tabData->dwBasePriority : m_dwBasePriority,
-				m_tabData->GetExtraEnv(),
+				m_tabData->environmentVariables,
 				m_dwStartupRows,
 				m_dwStartupColumns);
 
@@ -384,7 +384,7 @@ LRESULT ConsoleView::OnConsoleFwdMsg(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 
 	if (!TranslateKeyDown(uMsg, wParam, lParam))
 	{
-		TRACE(L"ConsoleView::OnConsoleFwdMsg Msg: 0x%04X, wParam: 0x%08X, lParam: 0x%08X\n", uMsg, wParam, lParam);
+		TRACE_KEY(L"ConsoleView::OnConsoleFwdMsg Msg: 0x%04X, wParam: 0x%08X, lParam: 0x%08X\n", uMsg, wParam, lParam);
 
 		bool boolPostMessage = false;
 
@@ -469,7 +469,7 @@ LRESULT ConsoleView::OnConsoleFwdMsg(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 
 			if( !boolPostMessage )
 			{
-				TRACE(
+				TRACE_KEY(
 					L"-> WriteConsoleInput\n"
 					L"  bKeyDown          = %s\n"
 					L"  dwControlKeyState = 0x%08lx\n"
@@ -1377,10 +1377,15 @@ void ConsoleView::Repaint(bool bFullRepaint)
 
 //////////////////////////////////////////////////////////////////////////////
 
-void ConsoleView::MainframeMoving()
+bool ConsoleView::MainframeMoving()
 {
 	// next OnPaint will do a full repaint
-	if (m_tabData->imageData.bRelative) m_bNeedFullRepaint = true;
+	if (m_tabData->imageData.bRelative)
+	{
+		m_bNeedFullRepaint = true;
+		return true;
+	}
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1457,6 +1462,20 @@ CString ConsoleView::GetConsoleCommand()
 	}
 
 	return strConsoleTitle.Trim();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+void ConsoleView::Clear()
+{
+	//clear screen
+	m_consoleHandler.Clear();
+
+	// reset vertical scroll to zero
+	m_dwVScrollMax = 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2707,30 +2726,43 @@ void ConsoleView::UpdateOffscreen(const CRect& rectBlit)
 			(consoleInfo->csbi.dwCursorPosition.Y >= consoleInfo->csbi.srWindow.Top) &&
 			(consoleInfo->csbi.dwCursorPosition.Y <= consoleInfo->csbi.srWindow.Bottom))
 		{
-			bool DBCS;
+			bool bDBCS    = false;
+			bool bVisible = true;
 			{
 				MutexLock bufferLock(m_consoleHandler.m_bufferMutex);
 				DWORD dwOffset =
 					(consoleInfo->csbi.dwCursorPosition.Y - consoleInfo->csbi.srWindow.Top) * m_dwScreenColumns +
 					(consoleInfo->csbi.dwCursorPosition.X - consoleInfo->csbi.srWindow.Left);
-				DBCS = (m_screenBuffer[dwOffset].charInfo.Attributes & COMMON_LVB_LEADING_BYTE) == COMMON_LVB_LEADING_BYTE;
+
+				if( dwOffset >= (m_dwScreenRows * m_dwScreenColumns) )
+				{
+					// ConsoleZ screen buffer and console info mismatch
+					bVisible = false;
+				}
+				else
+				{
+					bDBCS = (m_screenBuffer[dwOffset].charInfo.Attributes & COMMON_LVB_LEADING_BYTE) == COMMON_LVB_LEADING_BYTE;
+				}
 			}
 
-			if( DBCS )
+			if( bVisible )
 			{
-				if( m_cursorDBCS.get() )
-					m_cursorDBCS->BitBlt(
-								m_dcOffscreen,
-								(consoleInfo->csbi.dwCursorPosition.X - consoleInfo->csbi.srWindow.Left) * m_nCharWidth + m_nVInsideBorder,
-								(consoleInfo->csbi.dwCursorPosition.Y - consoleInfo->csbi.srWindow.Top) * m_nCharHeight + m_nHInsideBorder);
-			}
-			else
-			{
-				if( m_cursor.get() )
-					m_cursor->BitBlt(
-								m_dcOffscreen,
-								(consoleInfo->csbi.dwCursorPosition.X - consoleInfo->csbi.srWindow.Left) * m_nCharWidth + m_nVInsideBorder,
-								(consoleInfo->csbi.dwCursorPosition.Y - consoleInfo->csbi.srWindow.Top) * m_nCharHeight + m_nHInsideBorder);
+				if( bDBCS )
+				{
+					if( m_cursorDBCS.get() )
+						m_cursorDBCS->BitBlt(
+						m_dcOffscreen,
+						(consoleInfo->csbi.dwCursorPosition.X - consoleInfo->csbi.srWindow.Left) * m_nCharWidth  + m_nVInsideBorder,
+						(consoleInfo->csbi.dwCursorPosition.Y - consoleInfo->csbi.srWindow.Top)  * m_nCharHeight + m_nHInsideBorder);
+				}
+				else
+				{
+					if( m_cursor.get() )
+						m_cursor->BitBlt(
+						m_dcOffscreen,
+						(consoleInfo->csbi.dwCursorPosition.X - consoleInfo->csbi.srWindow.Left) * m_nCharWidth  + m_nVInsideBorder,
+						(consoleInfo->csbi.dwCursorPosition.Y - consoleInfo->csbi.srWindow.Top)  * m_nCharHeight + m_nHInsideBorder);
+				}
 			}
 		}
 	}
@@ -2979,6 +3011,12 @@ void ConsoleView::RedrawCharOnCursor(CDC& dc)
   DWORD dwOffset =
     (consoleInfo->csbi.dwCursorPosition.Y - consoleInfo->csbi.srWindow.Top) * m_dwScreenColumns +
     (consoleInfo->csbi.dwCursorPosition.X - consoleInfo->csbi.srWindow.Left);
+
+  if( dwOffset >= (m_dwScreenRows * m_dwScreenColumns) )
+  {
+	  // ConsoleZ screen buffer and console info mismatch
+	  return;
+  }
 
   CRect                      rectCursor;
   CHAR_INFO &                charInfo = m_screenBuffer[dwOffset].charInfo;

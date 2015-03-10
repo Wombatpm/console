@@ -115,6 +115,7 @@ MainFrame::MainFrame
 , m_bStatusBarVisible(true)
 , m_bTabsVisible     (true)
 , m_bFullScreen      (false)
+, m_bTransparencyActive(true)
 , m_dockPosition(dockNone)
 , m_zOrder(zorderNormal)
 , m_mousedragOffset(0, 0)
@@ -264,7 +265,7 @@ LRESULT MainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 	// attach menu
 	m_CmdBar.AttachMenu(GetMenu());
 	// load command bar images
-	m_CmdBar.LoadImages(IDR_MAINFRAME);
+	m_CmdBar.LoadImages(Helpers::GetHighDefinitionResourceId(IDR_TOOLBAR_16));
 	// remove old menu
 	SetMenu(NULL);
 
@@ -283,9 +284,9 @@ LRESULT MainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
   }
 
 #ifdef _USE_AERO
-	HWND hWndToolBar = CreateAeroToolBarCtrl(m_hWnd, IDR_MAINFRAME, FALSE, ATL_SIMPLE_TOOLBAR_PANE_STYLE);
+	HWND hWndToolBar = CreateAeroToolBarCtrl(m_hWnd, Helpers::GetHighDefinitionResourceId(IDR_TOOLBAR_16), FALSE, ATL_SIMPLE_TOOLBAR_PANE_STYLE);
 #else
-	HWND hWndToolBar = CreateSimpleToolBarCtrl(m_hWnd, IDR_MAINFRAME, FALSE, ATL_SIMPLE_TOOLBAR_PANE_STYLE);
+	HWND hWndToolBar = CreateSimpleToolBarCtrl(m_hWnd, Helpers::GetHighDefinitionResourceId(IDR_TOOLBAR_16), FALSE, ATL_SIMPLE_TOOLBAR_PANE_STYLE);
 #endif
 
 	TBBUTTONINFO tbi;
@@ -299,7 +300,7 @@ LRESULT MainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 	tbi.fsStyle |= BTNS_DROPDOWN;
 	m_toolbar.SetButtonInfo(ID_FILE_NEW_TAB, &tbi);
 
-	m_toolbar.AddBitmap(1, IDR_FULLSCREEN1);
+	m_toolbar.AddBitmap(1, Helpers::GetHighDefinitionResourceId(IDR_FULLSCREEN1_16));
 	m_nFullSreen1Bitmap = m_toolbar.GetImageList().GetImageCount() - 1;
 	m_nFullSreen2Bitmap = m_toolbar.GetBitmap(ID_VIEW_FULLSCREEN);
 
@@ -311,7 +312,7 @@ LRESULT MainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 	AddSimpleReBarBand(hWndCmdBar, NULL, FALSE);
 	AddSimpleReBarBand(hWndToolBar, NULL, TRUE, 0, TRUE);
 
-	HWND hWndToolBar2 = CreateSimpleToolBarCtrl(m_hWnd, IDR_SEARCH, FALSE, ATL_SIMPLE_TOOLBAR_PANE_STYLE);
+	HWND hWndToolBar2 = CreateSimpleToolBarCtrl(m_hWnd, Helpers::GetHighDefinitionResourceId(IDR_SEARCH_16), FALSE, ATL_SIMPLE_TOOLBAR_PANE_STYLE);
 #ifdef _USE_AERO
 	if (hWndToolBar2 != NULL)
 		aero::Subclass(m_searchbar, hWndToolBar2);
@@ -325,8 +326,8 @@ LRESULT MainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 
 #ifdef _USE_AERO
 	// we remove the grippers
-	CReBarCtrl rebar(m_hWndToolBar);
-	rebar.LockBands(true);
+	aero::Subclass(m_rebar, m_hWndToolBar);
+	m_rebar.LockBands(true);
 #endif
 
 	tbi.cbSize = sizeof(TBBUTTONINFO);
@@ -336,7 +337,7 @@ LRESULT MainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 	tbi.fsState = 0;
 	// BTNS_SHOWTEXT will allow the button size to be altered
 	tbi.fsStyle = BTNS_SHOWTEXT;
-	tbi.cx = 100;
+	tbi.cx = static_cast<WORD>(7 * ::GetSystemMetrics(SM_CXSMICON));
 
 	m_searchbar.SetButtonInfo(ID_SEARCH_COMBO, &tbi);
 
@@ -347,7 +348,7 @@ LRESULT MainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 	m_searchbar.GetItemRect(0, rcCombo);
 
 	// create search bar combo
-	m_cb.Create(m_hWnd, rcCombo, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBS_DROPDOWN | WS_VSCROLL);
+	m_cb.Create(m_hWnd, rcCombo, NULL, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VSCROLL | CBS_DROPDOWN | CBS_AUTOHSCROLL);
 	m_cb.SetParent(hWndToolBar2);
 
 	// set 5 lines visible in combo list
@@ -423,6 +424,8 @@ LRESULT MainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 	}
 
 	ShowTabs(bShowTabs);
+
+	UISetCheck(ID_SWITCH_TRANSPARENCY, m_bTransparencyActive);
 
 	SearchSettings& searchSettings = g_settingsHandler->GetBehaviorSettings2().searchSettings;
 	UISetCheck(ID_SEARCH_MATCH_CASE, searchSettings.bMatchCase);
@@ -609,8 +612,9 @@ void MainFrame::ActivateApp(void)
   m_activeTabView->SetAppActiveStatus(m_bAppActive);
 
   TransparencySettings& transparencySettings = g_settingsHandler->GetAppearanceSettings().transparencySettings;
+  TransparencyType transType = m_bTransparencyActive ? transparencySettings.transType : transNone;
 
-  if ((transparencySettings.transType == transAlpha) && 
+  if ((transType == transAlpha) && 
     ((transparencySettings.byActiveAlpha != 255) || (transparencySettings.byInactiveAlpha != 255)))
   {
     if (m_bAppActive)
@@ -629,7 +633,7 @@ void MainFrame::ActivateApp(void)
   m_TabCtrl.RedrawWindow();
 #endif
 
-  if ((transparencySettings.transType == transGlass) && 
+  if ((transType == transGlass) && 
     (transparencySettings.byActiveAlpha != transparencySettings.byInactiveAlpha))
   {
     m_activeTabView->Repaint(true);
@@ -774,22 +778,21 @@ LRESULT MainFrame::OnSysKeydown(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lPara
 
 LRESULT MainFrame::OnSysCommand(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled)
 {
-  // OnSize needs to know this
-  switch( GET_SC_WPARAM(wParam) )
-  {
-  case SC_RESTORE:
-		if( !this->IsWindowVisible() )
+	// OnSize needs to know this
+	switch (GET_SC_WPARAM(wParam))
+	{
+	case SC_RESTORE:
+		if (!this->IsWindowVisible())
 			ShowWindow(SW_SHOW);
+		m_bRestoringWindow = true;
+		break;
 
-		if( this->IsZoomed() )
-			m_bRestoringWindow = true;
-    break;
-
-  case SC_MAXIMIZE:
-    GetWindowRect(&m_rectRestoredWnd);
-    break;
+	case SC_MAXIMIZE:
+		GetWindowRect(&m_rectRestoredWnd);
+		break;
 
 	case SC_MINIMIZE:
+		GetWindowRect(&m_rectRestoredWnd);
 		{
 			StylesSettings& stylesSettings = g_settingsHandler->GetAppearanceSettings().stylesSettings;
 			if (!stylesSettings.bTaskbarButton && stylesSettings.bTrayIcon)
@@ -799,10 +802,10 @@ LRESULT MainFrame::OnSysCommand(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/,
 			}
 		}
 		break;
-  }
+	}
 
-  bHandled = FALSE;
-  return 0;
+	bHandled = FALSE;
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -893,6 +896,11 @@ LRESULT MainFrame::OnWindowPosChanging(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM 
 	WINDOWPOS*			pWinPos			= reinterpret_cast<WINDOWPOS*>(lParam);
 	PositionSettings&	positionSettings= g_settingsHandler->GetAppearanceSettings().positionSettings;
 
+	TRACE(
+		L"MainFrame::OnWindowPosChanging m_bRestoringWindow=%s pWinPos->flags=0x%lx\n",
+		m_bRestoringWindow? L"true" : L"false",
+		pWinPos->flags);
+
 	if (positionSettings.zOrder == zorderOnBottom) pWinPos->hwndInsertAfter = HWND_BOTTOM;
 
 	if (m_bRestoringWindow)
@@ -908,7 +916,7 @@ LRESULT MainFrame::OnWindowPosChanging(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM 
 		return 0;
 	}
 
-	if (!(pWinPos->flags & SWP_NOMOVE))
+	if (!(pWinPos->flags & SWP_NOMOVE) && GetKeyState(VK_LWIN) >= 0 && GetKeyState(VK_RWIN) >= 0)
 	{
 		// do nothing for minimized or maximized or fullscreen windows
 		if (IsIconic() || IsZoomed() || m_bFullScreen) return 0;
@@ -930,6 +938,14 @@ LRESULT MainFrame::OnWindowPosChanging(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM 
 			GetWindowRect(&rectWindow);
 			Helpers::GetDesktopRect(pointCursor, rectDesktop);
 			Helpers::GetMonitorRect(m_hWnd, rectMonitor);
+
+			TRACE(
+				L"MainFrame::OnWindowPosChanging snap 1 winpos(%ix%i,%ix%i) desktop(%ix%i-%ix%i) monitor(%ix%i-%ix%i) pointCursor(%ix%i)\n",
+				pWinPos->x,  pWinPos->y,
+				pWinPos->cx, pWinPos->cy,
+				rectDesktop.left, rectDesktop.top, rectDesktop.right, rectDesktop.bottom,
+				rectMonitor.left, rectMonitor.top, rectMonitor.right, rectMonitor.bottom,
+				pointCursor.x, pointCursor.y);
 
 			if (!rectMonitor.PtInRect(pointCursor))
 			{
@@ -965,22 +981,26 @@ LRESULT MainFrame::OnWindowPosChanging(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM 
 				nTB = 2;
 			}
 
+			TRACE(
+				L"MainFrame::OnWindowPosChanging snap 2 nLR=%i nTB=%i\n",
+				nLR, nTB);
+
 			if ((nLR != -1) && (nTB != -1))
 			{
 				m_dockPosition = static_cast<DockPosition>(nTB | nLR);
 			}
 		}
 
-
 		if (m_activeTabView)
 		{
-			CRect rectClient;
-			GetClientRect(&rectClient);
-
-			m_activeTabView->MainframeMoving();
-			// we need to invalidate client rect here for proper background 
-			// repaint when using relative backgrounds
-			InvalidateRect(&rectClient, FALSE);
+			if (m_activeTabView->MainframeMoving())
+			{
+				CRect rectClient;
+				GetClientRect(&rectClient);
+				// we need to invalidate client rect here for proper background 
+				// repaint when using relative backgrounds
+				InvalidateRect(&rectClient, FALSE);
+			}
 		}
 
 		return 0;
@@ -1078,7 +1098,7 @@ LRESULT MainFrame::OnSettingChange(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lPar
 	// to change environment, lParam should be "Environment"
 	if (strArea == L"Environment")
 	{
-		ConsoleHandler::UpdateEnvironmentBlock();
+		ConsoleHandler::UpdateCurrentUserEnvironmentBlock();
 	}
 	else
 	{
@@ -1155,7 +1175,7 @@ LRESULT MainFrame::OnUpdateTitles(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*
 	return 0;
 }
 
-std::wstring MainFrame::FormatTitle(std::wstring strFormat, std::shared_ptr<TabView> tabView, std::shared_ptr<ConsoleView> consoleView)
+std::wstring MainFrame::FormatTitle(std::wstring strFormat, TabView * tabView, std::shared_ptr<ConsoleView> consoleView)
 {
 /*
                   +-----+
@@ -1357,11 +1377,11 @@ void MainFrame::UpdateTabTitle(std::shared_ptr<TabView> tabView)
 
 	WindowSettings& windowSettings = g_settingsHandler->GetAppearanceSettings().windowSettings;
 
-	wstring strTabTitle = FormatTitle(windowSettings.strTabTitleFormat, tabView, consoleView);
+	wstring strTabTitle = FormatTitle(windowSettings.strTabTitleFormat, tabView.get(), consoleView);
 
 	if (tabView == m_activeTabView)
 	{
-		m_strWindowTitle = windowSettings.bUseTabTitles? strTabTitle : FormatTitle(windowSettings.strMainTitleFormat, tabView, consoleView);
+		m_strWindowTitle = windowSettings.bUseTabTitles? strTabTitle : FormatTitle(windowSettings.strMainTitleFormat, tabView.get(), consoleView);
 
 		SetWindowText(m_strWindowTitle.c_str());
 		if (g_settingsHandler->GetAppearanceSettings().stylesSettings.bTrayIcon)
@@ -2213,6 +2233,23 @@ LRESULT MainFrame::OnFileExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl
 
 //////////////////////////////////////////////////////////////////////////////
 
+LRESULT MainFrame::OnEditClear(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+  if (!m_activeTabView) return 0;
+  std::shared_ptr<ConsoleView> activeConsoleView = m_activeTabView->GetActiveConsole(_T(__FUNCTION__));
+  if( activeConsoleView )
+  {
+    activeConsoleView->Clear();
+  }
+
+  return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////
+
 LRESULT MainFrame::OnEditCopy(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
   if (!m_activeTabView) return 0;
@@ -2595,6 +2632,184 @@ LRESULT MainFrame::OnAppAbout(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl
 {
 	CAboutDlg dlg;
 	dlg.DoModal();
+
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+LRESULT MainFrame::OnFontInfo(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	try
+	{
+		if(m_activeTabView)
+		{
+			std::shared_ptr<ConsoleView> activeConsoleView = m_activeTabView->GetActiveConsole(_T(__FUNCTION__));
+			if(activeConsoleView)
+			{
+				MessageBox(activeConsoleView->GetConsoleHandler().GetFontInfo().c_str(), L"Font Information", MB_OK);
+			}
+		}
+	}
+	catch(std::exception& e)
+	{
+		::MessageBoxA(0, e.what(), "error", MB_ICONERROR | MB_OK);
+	}
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+LRESULT MainFrame::OnDiagnose(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	try
+	{
+		wchar_t szTempPath[MAX_PATH];
+		wchar_t szTempFileName[MAX_PATH];
+		if(!::GetTempPath(ARRAYSIZE(szTempPath), szTempPath))
+			Win32Exception::ThrowFromLastError("GetTempPath");
+		if(!::GetTempFileName(szTempPath, L"dmp", 0, szTempFileName))
+			Win32Exception::ThrowFromLastError("GetTempFileName");
+
+		{
+			std::unique_ptr<void, CloseHandleHelper> file(
+				::CreateFile(
+					szTempFileName,
+					GENERIC_WRITE,
+					0,
+					NULL,
+					CREATE_ALWAYS,
+					FILE_ATTRIBUTE_NORMAL,
+					NULL));
+
+			if(file.get() == INVALID_HANDLE_VALUE)
+				Win32Exception::ThrowFromLastError("CreateFile");
+
+			std::wstring dummy = L"ConsoleZ "
+
+#ifdef _USE_AERO
+				L"aero "
+#else
+				L"legacy "
+#endif
+
+#ifdef _WIN64
+				L"amd64 "
+#else
+				L"x86 "
+#endif
+
+				_T(VERSION_PRODUCT);
+
+			Helpers::WriteLine(file.get(), dummy);
+
+			{
+				MutexLock tabMapLock(m_tabsMutex);
+
+				for(auto tab = m_tabs.begin(); tab != m_tabs.end(); ++tab)
+				{
+					dummy =
+						(tab->second == m_activeTabView ? std::wstring(L"Tab (active): ") : std::wstring(L"Tab: "))
+						+ tab->second->GetTabData()->strTitle;
+					Helpers::WriteLine(file.get(), dummy);
+
+					tab->second->Diagnose(file.get());
+				}
+			}
+
+			dummy = std::wstring(L"Monitors ") + std::to_wstring(::GetSystemMetrics(SM_CMONITORS));
+			Helpers::WriteLine(file.get(), dummy);
+
+			::EnumDisplayMonitors(NULL, NULL, MainFrame::MonitorEnumProcDiag, reinterpret_cast<LPARAM>(file.get()));
+
+			std::wstring strSettingsFileName = g_settingsHandler->GetSettingsFileName();
+
+			std::unique_ptr<void, CloseHandleHelper> fileSettings(
+				::CreateFile(
+					strSettingsFileName.c_str(),
+					GENERIC_READ,
+					FILE_SHARE_READ,
+					NULL,
+					OPEN_EXISTING,
+					FILE_ATTRIBUTE_NORMAL,
+					NULL));
+
+			if(fileSettings.get() == INVALID_HANDLE_VALUE)
+			{
+				if(GetLastError() == ERROR_FILE_NOT_FOUND)
+				{
+					Helpers::WriteLine(file.get(), std::wstring(L"Settings file internal resource"));
+				}
+				else
+				{
+					Win32Exception::ThrowFromLastError("CreateFile");
+				}
+			}
+			else
+			{
+				dummy = std::wstring(L"Settings file ") + strSettingsFileName;
+				Helpers::WriteLine(file.get(), dummy);
+
+				char buffer[4096];
+				DWORD dwBytesRead;
+				for(;;)
+				{
+					if(!::ReadFile(
+						fileSettings.get(),
+						buffer,
+						sizeof(buffer),
+						&dwBytesRead,
+						NULL))
+						Win32Exception::ThrowFromLastError("ReadFile");
+
+					if(dwBytesRead == 0) break;
+
+					if(!::WriteFile(
+						file.get(),
+						buffer,
+						dwBytesRead,
+						NULL,
+						NULL))
+						Win32Exception::ThrowFromLastError("WriteFile");
+				}
+			}
+		}
+
+		// setup the startup info struct
+		STARTUPINFO si;
+		::ZeroMemory(&si, sizeof(STARTUPINFO));
+		si.cb = sizeof(STARTUPINFO);
+
+		PROCESS_INFORMATION pi;
+
+		if (!::CreateProcess(
+			NULL,
+			const_cast<wchar_t*>(boost::str(boost::wformat(L"notepad.exe \"%1%\"") % szTempFileName).c_str()),
+			NULL,
+			NULL,
+			FALSE,
+			0,
+			NULL,
+			NULL,
+			&si,
+			&pi))
+		{
+			Win32Exception::ThrowFromLastError("CreateProcess");
+		}
+
+		::CloseHandle(pi.hProcess);
+		::CloseHandle(pi.hThread);
+	}
+	catch(std::exception& e)
+	{
+		::MessageBoxA(0, e.what(), "error", MB_ICONERROR|MB_OK);
+	}
 	return 0;
 }
 
@@ -2951,11 +3166,11 @@ void MainFrame::UpdateStatusBar()
       _snwprintf_s(strColsRows,    ARRAYSIZE(strColsRows),    _TRUNCATE, L"%lux%lu",
         consoleParams->dwColumns,
         consoleParams->dwRows);
-      _snwprintf_s(strPid,         ARRAYSIZE(strPid),         _TRUNCATE, L"%lu",
-        activeConsoleView->GetConsoleHandler().GetConsolePid());
+
       _snwprintf_s(strBufColsRows, ARRAYSIZE(strBufColsRows), _TRUNCATE, L"%lux%lu",
         consoleParams->dwBufferColumns ? consoleParams->dwBufferColumns : consoleParams->dwColumns,
         consoleParams->dwBufferRows ? consoleParams->dwBufferRows : consoleParams->dwRows);
+
       _snwprintf_s(strZoom, ARRAYSIZE(strZoom),               _TRUNCATE, L"%lu%%",
         activeConsoleView->GetFontZoom());
 
@@ -3059,7 +3274,7 @@ void MainFrame::DockWindow(DockPosition dockPosition)
 	m_dockPosition = dockPosition;
 	if (m_dockPosition == dockNone) return;
 
-	if( this->IsZoomed() ) return;
+	if( this->IsZoomed() || m_bFullScreen ) return;
 
 	CRect			rectDesktop;
 	CRect			rectWindow;
@@ -3356,7 +3571,7 @@ void MainFrame::ShowFullScreen(bool bShow)
 
   if( m_bFullScreen )
   {
-    m_CmdBar.ReplaceBitmap(IDR_FULLSCREEN1, ID_VIEW_FULLSCREEN);
+    m_CmdBar.ReplaceBitmap(Helpers::GetHighDefinitionResourceId(IDR_FULLSCREEN1_16), ID_VIEW_FULLSCREEN);
     m_toolbar.ChangeBitmap(ID_VIEW_FULLSCREEN, m_nFullSreen1Bitmap);
 
     // save the non fullscreen position and size
@@ -3371,7 +3586,7 @@ void MainFrame::ShowFullScreen(bool bShow)
   }
   else
   {
-    m_CmdBar.ReplaceBitmap(IDR_FULLSCREEN2, ID_VIEW_FULLSCREEN);
+    m_CmdBar.ReplaceBitmap(Helpers::GetHighDefinitionResourceId(IDR_FULLSCREEN2_16), ID_VIEW_FULLSCREEN);
     m_toolbar.ChangeBitmap(ID_VIEW_FULLSCREEN, m_nFullSreen2Bitmap);
 
     ControlsSettings&	controlsSettings= g_settingsHandler->GetAppearanceSettings().controlsSettings;
@@ -3441,6 +3656,67 @@ BOOL CALLBACK MainFrame::MonitorEnumProc(HMONITOR /*hMonitor*/, HDC /*hdcMonitor
   pvMonitors->push_back(lprcMonitor);
 
   return TRUE;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+BOOL CALLBACK MainFrame::MonitorEnumProcDiag(HMONITOR hMonitor, HDC /*hdcMonitor*/, LPRECT lprcMonitor, LPARAM lpData)
+{
+	MONITORINFOEX miex;
+	miex.cbSize = sizeof(MONITORINFOEX);
+	::GetMonitorInfo(hMonitor, &miex);
+
+	Helpers::WriteLine(
+		reinterpret_cast<HANDLE>(lpData),
+		std::wstring(L"  Flags ") + std::to_wstring(miex.dwFlags)
+		+ std::wstring(((miex.dwFlags & MONITORINFOF_PRIMARY) == MONITORINFOF_PRIMARY)? L"  primary" : L""));
+
+	DISPLAY_DEVICE dd;
+	dd.cb = sizeof(dd);
+	::EnumDisplayDevices(miex.szDevice, 0, &dd, EDD_GET_DEVICE_INTERFACE_NAME);
+
+	Helpers::WriteLine(
+		reinterpret_cast<HANDLE>(lpData),
+		std::wstring(L"  DeviceID ") + dd.DeviceID);
+
+	Helpers::WriteLine(
+		reinterpret_cast<HANDLE>(lpData),
+		std::wstring(L"  DeviceKey ") + dd.DeviceKey);
+
+	Helpers::WriteLine(
+		reinterpret_cast<HANDLE>(lpData),
+		std::wstring(L"  DeviceName ") + dd.DeviceName);
+
+	Helpers::WriteLine(
+		reinterpret_cast<HANDLE>(lpData),
+		std::wstring(L"  DeviceString ") + dd.DeviceString);
+
+	Helpers::WriteLine(
+		reinterpret_cast<HANDLE>(lpData),
+		std::wstring(L"  StateFlags ") + std::to_wstring(dd.StateFlags));
+
+	Helpers::WriteLine(
+		reinterpret_cast<HANDLE>(lpData),
+		boost::str(
+			boost::wformat(L"  Rect (%1%,%2%)x(%3%,%4%)")
+			% lprcMonitor->left
+			% lprcMonitor->top
+			% lprcMonitor->right
+			% lprcMonitor->bottom));
+
+	Helpers::WriteLine(
+		reinterpret_cast<HANDLE>(lpData),
+		boost::str(
+			boost::wformat(L"  Work (%1%,%2%)x(%3%,%4%)")
+			% miex.rcWork.left
+			% miex.rcWork.top
+			% miex.rcWork.right
+			% miex.rcWork.bottom));
+
+	return TRUE;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -3584,6 +3860,7 @@ void MainFrame::SetTransparency()
 {
   // set transparency
   TransparencySettings& transparencySettings = g_settingsHandler->GetAppearanceSettings().transparencySettings;
+  TransparencyType transType = m_bTransparencyActive ? transparencySettings.transType : transNone;
 
   // RAZ
   SetWindowLong(
@@ -3595,7 +3872,7 @@ void MainFrame::SetTransparency()
   DwmIsCompositionEnabled(&fEnabled);
   if( fEnabled )
   {
-    if( transparencySettings.transType != transGlass )
+    if( transType != transGlass )
     {
       // there is a side effect whith glass into client area and no caption (and no resizable)
       // blur is not applied, the window is transparent ...
@@ -3616,7 +3893,7 @@ void MainFrame::SetTransparency()
       }
       else
       {
-        if( transparencySettings.transType == transColorKey )
+        if( transType == transColorKey )
         {
           MARGINS m = {0, 0, 0, 0};
           ::DwmExtendFrameIntoClientArea(m_hWnd, &m);
@@ -3630,7 +3907,7 @@ void MainFrame::SetTransparency()
   }
 #endif
 
-  switch (transparencySettings.transType)
+  switch (transType)
   {
   case transAlpha:
     // if ConsoleZ is pinned to the desktop window, wee need to set it as top-level window temporarily
@@ -3710,7 +3987,9 @@ void MainFrame::SetTransparency()
 
 #ifdef _USE_AERO
   aero::SetAeroGlassActive(fEnabled != FALSE);
+
   m_ATB.Invalidate(TRUE);
+  m_searchbar.Invalidate(TRUE);
   m_TabCtrl.Invalidate(TRUE);
 #endif
 }
@@ -3981,7 +4260,7 @@ LRESULT MainFrame::OnExternalCommand(WORD /*wNotifyCode*/, WORD wID, HWND /*hWnd
 	{
 		strCmdLine = FormatTitle(
 			g_settingsHandler->GetHotKeys().externalCommands[wID - ID_EXTERNAL_COMMAND_1],
-			m_activeTabView,
+			m_activeTabView.get(),
 			consoleView);
 
 		// setup the startup info struct
@@ -4132,11 +4411,11 @@ void MainFrame::SaveSearchMRU()
 		if( m_cb.GetItemText(i, str) )
 		{
 			value.Append(str);
-			value.Append(L"\0", 1);
+			value.AppendChar(0);
 		}
 	}
 
-	value.Append(L"\0", 1);
+	value.AppendChar(0);
 
 	key.SetMultiStringValue(L"SearchMRU", value.GetString());
 }
@@ -4227,6 +4506,78 @@ LRESULT MainFrame::OnFind(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, 
 		ShowSearchBar(true);
 
 	m_searchedit.SetFocus();
+
+	return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+
+LRESULT MainFrame::OnSwitchTransparency(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	m_bTransparencyActive = !m_bTransparencyActive;
+	UISetCheck(ID_SWITCH_TRANSPARENCY, m_bTransparencyActive);
+	SetTransparency();
+
+	return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+
+LRESULT MainFrame::OnShowContextMenu1(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	CPoint	screenPoint(0,0);
+	ClientToScreen(&screenPoint);
+	
+	SendMessage(UM_SHOW_POPUP_MENU, static_cast<WPARAM>(MouseSettings::cmdMenu1), MAKELPARAM(screenPoint.x, screenPoint.y));
+	return 0;
+}
+
+LRESULT MainFrame::OnShowContextMenu2(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	CPoint	screenPoint(0, 0);
+	ClientToScreen(&screenPoint);
+
+	SendMessage(UM_SHOW_POPUP_MENU, static_cast<WPARAM>(MouseSettings::cmdMenu2), MAKELPARAM(screenPoint.x, screenPoint.y));
+	return 0;
+}
+
+LRESULT MainFrame::OnShowContextMenu3(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	CPoint	screenPoint(0, 0);
+	ClientToScreen(&screenPoint);
+
+	SendMessage(UM_SHOW_POPUP_MENU, static_cast<WPARAM>(MouseSettings::cmdMenu3), MAKELPARAM(screenPoint.x, screenPoint.y));
+	return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+
+LRESULT MainFrame::OnSendCtrlEvent(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	MutexLock lock(m_tabsMutex);
+
+	if( !m_activeTabView ) return 0;
+
+	std::shared_ptr<ConsoleView> activeConsoleView = m_activeTabView->GetActiveConsole(_T(__FUNCTION__));
+	if( !activeConsoleView ) return 0;
+
+	if( activeConsoleView->IsGrouped() )
+	{
+		for( TabViewMap::iterator it = m_tabs.begin(); it != m_tabs.end(); ++it )
+		{
+			it->second->SendCtrlCToConsoles();
+		}
+	}
+	else
+	{
+		activeConsoleView->GetConsoleHandler().SendCtrlC();
+	}
 
 	return 0;
 }

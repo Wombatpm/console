@@ -117,11 +117,11 @@ FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,130,130,50,14
 #ifndef _USE_AERO
-    CTEXT           "\nConsole 2.0",IDC_STATIC_VERSION,25,41,78,25
+    CTEXT           "\nConsoleZ",IDC_STATIC_VERSION,25,41,78,25
     ICON            IDR_MAINFRAME,IDC_APPICON,55,26,20,20
-    CTEXT           "\nCopyright (C) 2011-2014\nChristophe Bucher\n\na modified version of\nConsole 2\nfrom\nMarko Bozikovic",IDC_APPTEXT,14,64,103,80
-    GROUPBOX        "",IDC_STATIC,7,7,115,137
+    CTEXT           "\nCopyright (C) 2011-2015\nChristophe Bucher\n\na modified version of\nConsole 2\nfrom\nMarko Bozikovic",IDC_APPTEXT,14,64,103,80,,WS_EX_TRANSPARENT
 #endif
+    GROUPBOX        "",IDC_STATIC,7,7,115,137
 END
 
 IDD_RENAME_TAB DIALOGEX 0, 0, 202, 55
@@ -448,13 +448,14 @@ BEGIN
     LTEXT           "Base priority:",IDC_STATIC,8,101,43,8
     COMBOBOX        IDC_COMBO_BASE_PRIORITY,51,99,63,53,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 
-    CONTROL         "Run as current user",IDC_CHECK_RUN_AS_CURRENT_USER,"Button",BS_AUTORADIOBUTTON | WS_GROUP,8,116,78,10
-    CONTROL         "&Administrator",IDC_CHECK_RUN_AS_ADMIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,86,116,108,10
-    CONTROL         "Run as &user:",IDC_CHECK_RUN_AS_USER,"Button",BS_AUTORADIOBUTTON,8,131,58,10
-    EDITTEXT        IDC_TAB_USER,66,128,106,14,ES_AUTOHSCROLL
-    CONTROL         "&Net only",IDC_CHECK_NET_ONLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,177,131,40,10
+    LTEXT           "Run as",IDC_STATIC,8,116,30,8
+    CONTROL         "current user",IDC_CHECK_RUN_AS_CURRENT_USER,"Button",BS_AUTORADIOBUTTON | WS_GROUP,38,116,70,10
+    CONTROL         "&administrator",IDC_CHECK_RUN_AS_ADMIN,"Button",BS_AUTORADIOBUTTON,38,131,70,10
+    CONTROL         "&user:",IDC_CHECK_RUN_AS_USER,"Button",BS_AUTORADIOBUTTON,38,146,28,10
+    EDITTEXT        IDC_TAB_USER,70,143,100,14,ES_AUTOHSCROLL
+    CONTROL         "&Net only",IDC_CHECK_NET_ONLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,177,146,40,10
 
-    GROUPBOX        "Shell",IDC_STATIC,0,55,221,95,WS_GROUP,WS_EX_TRANSPARENT
+    GROUPBOX        "Shell",IDC_STATIC,0,55,221,110,WS_GROUP,WS_EX_TRANSPARENT
 END
 
 IDD_SETTINGS_TABS_2 DIALOGEX 0, 0, 223, 172
@@ -717,44 +718,54 @@ END
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR 16, 16
-BEGIN
-    BUTTON      ID_FILE_NEW_TAB
-    BUTTON      ID_PREV_TAB
-    BUTTON      ID_NEXT_TAB
-    BUTTON      ID_EDIT_RENAME_TAB
-    SEPARATOR
-    BUTTON      ID_EDIT_COPY
-    BUTTON      ID_EDIT_PASTE
-    SEPARATOR
-    BUTTON      ID_SPLIT_HORIZ
-    BUTTON      ID_SPLIT_VERT
-    SEPARATOR
-    BUTTON      ID_VIEW_FULLSCREEN
-    SEPARATOR
-    BUTTON      ID_APP_ABOUT
-    BUTTON      ID_HELP
-END
+IDR_TOOLBAR_16 TOOLBAR 16, 16
+#include "res/Toolbar.rc2"
 
-IDR_SEARCH TOOLBAR 16, 16
-BEGIN
-    BUTTON      ID_SEARCH_COMBO
-    BUTTON      ID_SEARCH_PREV
-    BUTTON      ID_SEARCH_NEXT
-    BUTTON      ID_SEARCH_MATCH_CASE
-    BUTTON      ID_SEARCH_MATCH_WHOLE_WORD
-END
+IDR_TOOLBAR_20 TOOLBAR 20, 20
+#include "res/Toolbar.rc2"
 
+IDR_TOOLBAR_24 TOOLBAR 24, 24
+#include "res/Toolbar.rc2"
+
+IDR_TOOLBAR_32 TOOLBAR 32, 32
+#include "res/Toolbar.rc2"
+
+IDR_SEARCH_16 TOOLBAR 16, 16
+#include "res/SearchBar.rc2"
+
+IDR_SEARCH_20 TOOLBAR 20, 20
+#include "res/SearchBar.rc2"
+
+IDR_SEARCH_24 TOOLBAR 24, 24
+#include "res/SearchBar.rc2"
+
+IDR_SEARCH_32 TOOLBAR 32, 32
+#include "res/SearchBar.rc2"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Bitmap
 //
 
-IDR_MAINFRAME           BITMAP                  "res\\toolbar_aero.bmp"
-IDR_FULLSCREEN1         BITMAP                  "res\\fullscreen1.bmp"
-IDR_FULLSCREEN2         BITMAP                  "res\\fullscreen2.bmp"
-IDR_SEARCH              BITMAP                  "res\\search.bmp"
+IDR_TOOLBAR_16          BITMAP                  "res\\toolbar_16.bmp"
+IDR_FULLSCREEN1_16      BITMAP                  "res\\fullscreen1_16.bmp"
+IDR_FULLSCREEN2_16      BITMAP                  "res\\fullscreen2_16.bmp"
+IDR_SEARCH_16           BITMAP                  "res\\search_16.bmp"
+
+IDR_TOOLBAR_20          BITMAP                  "res\\toolbar_20.bmp"
+IDR_FULLSCREEN1_20      BITMAP                  "res\\fullscreen1_20.bmp"
+IDR_FULLSCREEN2_20      BITMAP                  "res\\fullscreen2_20.bmp"
+IDR_SEARCH_20           BITMAP                  "res\\search_20.bmp"
+
+IDR_TOOLBAR_24          BITMAP                  "res\\toolbar_24.bmp"
+IDR_FULLSCREEN1_24      BITMAP                  "res\\fullscreen1_24.bmp"
+IDR_FULLSCREEN2_24      BITMAP                  "res\\fullscreen2_24.bmp"
+IDR_SEARCH_24           BITMAP                  "res\\search_24.bmp"
+
+IDR_TOOLBAR_32          BITMAP                  "res\\toolbar_32.bmp"
+IDR_FULLSCREEN1_32      BITMAP                  "res\\fullscreen1_32.bmp"
+IDR_FULLSCREEN2_32      BITMAP                  "res\\fullscreen2_32.bmp"
+IDR_SEARCH_32           BITMAP                  "res\\search_32.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -799,6 +810,7 @@ BEGIN
     POPUP "View"
     BEGIN
         MENUITEM "&Console Window",             ID_VIEW_CONSOLE
+        MENUITEM "Font Information...",         ID_FONT_INFO
         MENUITEM SEPARATOR
         MENUITEM "&Menu",                       ID_VIEW_MENU
         MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
@@ -807,10 +819,12 @@ BEGIN
         MENUITEM "Ta&bs",                       ID_VIEW_TABS
         MENUITEM SEPARATOR
         MENUITEM "&Full Screen",                ID_VIEW_FULLSCREEN
+        MENUITEM "Switch On/Off Transparency",  ID_SWITCH_TRANSPARENCY
     END
     POPUP "Help"
     BEGIN
         MENUITEM "&Help",                       ID_HELP
+        MENUITEM "Diagnose",                    ID_DIAGNOSE
         MENUITEM SEPARATOR
         MENUITEM "&About ConsoleZ...",          ID_APP_ABOUT
     END
@@ -893,6 +907,7 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\console.ico"
+//IDR_MAINFRAME           ICON                    "res\\testHighDPI.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1015,7 +1030,6 @@ CONSOLE.XML             HTML                    "..\\setup\\config\\console.xml"
 STRINGTABLE
 BEGIN
     IDR_MAINFRAME              "ConsoleZ"
-    IDR_SEARCH                 "Search"
     ID_SEARCH_COMBO            "\nSearch"
     ID_SEARCH_PREV             "\nFind Previous"
     ID_SEARCH_NEXT             "\nFind Next"
@@ -1061,7 +1075,7 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_EDIT_CLEAR           "Erase the selection\nErase"
+    ID_EDIT_CLEAR           "Clear screen\nClear"
     ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
     ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
     ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
@@ -1084,6 +1098,7 @@ BEGIN
     ID_VIEW_TOOLBAR         "Show or hide the toolbar"
     ID_VIEW_SEARCH_BAR      "Show or hide the search bar"
     ID_VIEW_STATUS_BAR      "Show or hide the status bar"
+    ID_SWITCH_TRANSPARENCY  "Turn on or off transparency"
 END
 
 STRINGTABLE

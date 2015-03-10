@@ -1757,11 +1757,12 @@ HotKeys::HotKeys()
   commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"grouptab",   ID_GROUP_TAB,        L"Group tab")));
   commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"ungrouptab", ID_UNGROUP_TAB,      L"Ungroup tab")));
 
-	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"copy",			ID_EDIT_COPY,				L"Copy selection")));
-	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"selectall",			ID_EDIT_SELECT_ALL,				L"Select all")));
-	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"clear_selection",ID_EDIT_CLEAR_SELECTION,	L"Clear selection")));
-	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"paste",		ID_EDIT_PASTE,				L"Paste")));
-	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"stopscroll",	ID_EDIT_STOP_SCROLLING,		L"Stop scrolling")));
+	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"clear",           ID_EDIT_CLEAR,           L"Clear screen")));
+	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"copy",            ID_EDIT_COPY,            L"Copy selection")));
+	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"selectall",       ID_EDIT_SELECT_ALL,      L"Select all")));
+	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"clear_selection", ID_EDIT_CLEAR_SELECTION, L"Clear selection")));
+	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"paste",           ID_EDIT_PASTE,           L"Paste")));
+	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"stopscroll",      ID_EDIT_STOP_SCROLLING,  L"Stop scrolling")));
 
 	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"scrollrowup",		ID_SCROLL_UP,			L"Scroll buffer row up")));
 	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"scrollrowdown",	ID_SCROLL_DOWN,			L"Scroll buffer row down")));
@@ -1776,7 +1777,15 @@ HotKeys::HotKeys()
 	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"findnext",   ID_SEARCH_NEXT, L"Find next")));
 	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"findprev",   ID_SEARCH_PREV, L"Find previous")));
 
+	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"switchtransparency", ID_SWITCH_TRANSPARENCY, L"Turn on/off transparency")));
+
 	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"dumpbuffer",	IDC_DUMP_BUFFER,	L"Dump screen buffer")));
+
+	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"cmdMenu1", ID_SHOW_CONTEXT_MENU_1, L"Show Context menu #1")));
+	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"cmdMenu2", ID_SHOW_CONTEXT_MENU_2, L"Show Context menu #2")));
+	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"cmdMenu3", ID_SHOW_CONTEXT_MENU_3, L"Show Context menu #3")));
+
+	commands.push_back(std::shared_ptr<CommandData>(new CommandData(L"ctrlC", ID_SEND_CTRL_C, L"Send CTRL-C event")));
 
 	for(WORD i = 0; i < EXTERNAL_COMMANDS_COUNT; ++i)
 	{
@@ -2244,18 +2253,14 @@ bool TabSettings::Load(const CComPtr<IXMLDOMElement>& pSettingsRoot)
 					pEnvNodes->get_item(i, &pEnvNode);
 					if (FAILED(pEnvNode.QueryInterface(&pEnvElement))) continue;
 
-					wstring strEnvVariable;
-					wstring strEnvValue;
-					bool    bEnvChecked = true;
-					XmlHelper::GetAttribute(pEnvElement, CComBSTR(L"var"),   strEnvVariable, L"");
-					XmlHelper::GetAttribute(pEnvElement, CComBSTR(L"value"), strEnvValue,    L"");
-					XmlHelper::GetAttribute(pEnvElement, CComBSTR(L"check"), bEnvChecked,    true);
-					if( !strEnvVariable.empty() )
-					{
-						tabData->strEnvVariables.push_back(strEnvVariable);
-						tabData->strEnvValues.push_back(strEnvValue);
-						tabData->bEnvChecked.push_back(bEnvChecked);
-					}
+					std::shared_ptr<VarEnv> varenv (new VarEnv);
+
+					XmlHelper::GetAttribute(pEnvElement, CComBSTR(L"var"),      varenv->strEnvVariable, L"");
+					XmlHelper::GetAttribute(pEnvElement, CComBSTR(L"value"),    varenv->strEnvValue,    L"");
+					XmlHelper::GetAttribute(pEnvElement, CComBSTR(L"check"),    varenv->bEnvChecked,    true);
+
+					if( !varenv->strEnvVariable.empty() )
+						tabData->environmentVariables.push_back(varenv);
 				}
 			}
 		}
@@ -2391,18 +2396,18 @@ bool TabSettings::Save(const CComPtr<IXMLDOMElement>& pSettingsRoot)
 		XmlHelper::SetAttribute(pNewConsoleElement, CComBSTR(L"run_as_admin"), (*itTab)->bRunAsAdministrator);
 
 		// add <env> tag
-		if(! (*itTab)->strEnvVariables.empty() )
+		if(! (*itTab)->environmentVariables.empty() )
 		{
-			for(size_t i = 0; i < (*itTab)->strEnvVariables.size(); ++i)
+			for(size_t i = 0; i < (*itTab)->environmentVariables.size(); ++i)
 			{
 				CComPtr<IXMLDOMElement> pNewEnvElement;
 				CComPtr<IXMLDOMNode>    pNewEnvOut;
 
 				pSettingsDoc->createElement(CComBSTR(L"env"), &pNewEnvElement);
 
-				XmlHelper::SetAttribute(pNewEnvElement, CComBSTR(L"var"),   (*itTab)->strEnvVariables[i]);
-				XmlHelper::SetAttribute(pNewEnvElement, CComBSTR(L"value"), (*itTab)->strEnvValues[i]);
-				XmlHelper::SetAttribute(pNewEnvElement, CComBSTR(L"check"), (*itTab)->bEnvChecked[i]);
+				XmlHelper::SetAttribute(pNewEnvElement, CComBSTR(L"var"),   (*itTab)->environmentVariables[i]->strEnvVariable);
+				XmlHelper::SetAttribute(pNewEnvElement, CComBSTR(L"value"), (*itTab)->environmentVariables[i]->strEnvValue);
+				XmlHelper::SetAttribute(pNewEnvElement, CComBSTR(L"check"), (*itTab)->environmentVariables[i]->bEnvChecked);
 
 				XmlHelper::AddTextNode(pNewConsoleElement, CComBSTR(L"\n\t\t\t\t"));
 				pNewConsoleElement->appendChild(pNewEnvElement, &pNewEnvOut);

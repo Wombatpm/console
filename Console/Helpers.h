@@ -10,6 +10,19 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
+struct __case_insensitive_compare
+{
+	bool operator() (const std::wstring& a, const std::wstring& b) const
+	{
+		return (_wcsicmp(a.c_str( ), b.c_str()) < 0);
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////
+
 class Helpers
 {
 	public:
@@ -23,6 +36,12 @@ class Helpers
 		static wstring ExpandEnvironmentStrings(const wstring& str);
 		static wstring ExpandEnvironmentStringsForUser(HANDLE userToken, const wstring& str);
 
+		static std::wstring ExpandEnvironmentStrings(const wchar_t * envb, const std::wstring & str);
+		static const wchar_t * GetEnvironmentVariable(const wchar_t * envb, const wchar_t * str, size_t len = SIZE_MAX);
+		static std::wstring ExpandEnvironmentStrings(const std::map<std::wstring, std::wstring, __case_insensitive_compare> & dictionary, const std::wstring & str);
+
+		static std::wstring GetComputerName(void);
+
 		static bool GetMonitorRect(HWND hWnd, CRect& rectMonitor);
 		static bool GetDesktopRect(HWND hWnd, CRect& rectDesktop);
 		static bool GetDesktopRect(const CPoint& point, CRect& rectDesktop);
@@ -34,6 +53,11 @@ class Helpers
 
 		static bool IsElevated(void);
 		static bool CheckOSVersion(DWORD dwMinMajorVersion, DWORD dwMinMinorVersion);
+
+		static int GetHighDefinitionResourceId(int nId);
+
+		static std::string ToUtf8(const std::wstring& text);
+		static void WriteLine(HANDLE hFile, const std::wstring& text);
 
 	private:
 

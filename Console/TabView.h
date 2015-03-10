@@ -60,7 +60,7 @@ public:
   void SetActive(bool bActive);
   void SetAppActiveStatus(bool bAppActive);
   void SetResizing(bool bResizing);
-  void MainframeMoving();
+  bool MainframeMoving();
   void Repaint(bool bFullRepaint);
   void InitializeScrollbars();
   void AdjustRectAndResize(ADJUSTSIZE as, CRect& clientRect, DWORD dwResizeWindowEdge);
@@ -75,11 +75,14 @@ public:
   void PostMessageToConsoles(UINT Msg, WPARAM wParam, LPARAM lParam);
   void WriteConsoleInputToConsoles(KEY_EVENT_RECORD* pkeyEvent);
   void SendTextToConsoles(const wchar_t* pszText);
+  void SendCtrlCToConsoles();
 
   inline bool IsGrouped() const { return m_boolIsGrouped; }
   void Group(bool b);
 
   inline size_t GetViewsCount(void) const { return m_views.size(); }
+
+	void Diagnose(HANDLE hFile);
 
 private:
 	HWND CreateNewConsole(ConsoleViewCreate* consoleViewCreate, const wstring& strCmdLineInitialDir = wstring(L""), const wstring& strCmdLineInitialCmd = wstring(L""), DWORD dwBasePriority = ULONG_MAX);
